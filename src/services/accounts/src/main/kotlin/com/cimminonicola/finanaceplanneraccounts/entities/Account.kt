@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
-@Document
+@Document(collection = "accounts")
 class Account(
     var name: String,
     var currency: String,
