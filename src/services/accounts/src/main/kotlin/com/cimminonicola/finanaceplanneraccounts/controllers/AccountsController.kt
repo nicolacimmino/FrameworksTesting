@@ -11,12 +11,12 @@ class AccountsController(
     private val accountsRepository: AccountsRepository
 ) {
 
-    @GetMapping("/api/accounts")
+    @GetMapping("/api/users/{user_id}/accounts")
     fun getAllAccounts(): List<Account> {
         return this.accountsRepository.findAll()
     }
 
-    @PostMapping("/api/accounts")
+    @PostMapping("/api/users/{user_id}/accounts")
     fun addAccount(@RequestBody account: Account): Account {
         if (this.accountsRepository.existsByName(account.name)) {
             throw InputInvalidApiException("Account exists")
@@ -27,12 +27,21 @@ class AccountsController(
         return account
     }
 
-    @DeleteMapping("/api/accounts/{id}")
-    fun deleteAccount(@PathVariable id: String) {
-        if (!this.accountsRepository.existsById(id)) {
+    @DeleteMapping("/api/users/{user_id}/accounts/{account_id}")
+    fun deleteAccount(@PathVariable account_id: String) {
+        if (!this.accountsRepository.existsById(account_id)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
-        this.accountsRepository.deleteById(id)
+        this.accountsRepository.deleteById(account_id)
+    }
+
+    @DeleteMapping("/api/users/{user_id}/accounts/")
+    fun deleteAccountByName(@RequestParam("name") name: String) {
+        if (!this.accountsRepository.existsByName(name)) {
+            throw ResourceNotFoundApiException("Account doesn't exist")
+        }
+
+        this.accountsRepository.deleteByName(name)
     }
 }
