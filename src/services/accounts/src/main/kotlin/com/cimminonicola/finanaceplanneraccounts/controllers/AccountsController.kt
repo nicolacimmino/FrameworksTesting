@@ -28,20 +28,29 @@ class AccountsController(
     }
 
     @DeleteMapping("/api/users/{user_id}/accounts/{account_id}")
-    fun deleteAccount(@PathVariable account_id: String) {
-        if (!this.accountsRepository.existsById(account_id)) {
+    fun deleteAccount(@PathVariable("account_id") accountId: String) {
+        if (!this.accountsRepository.existsById(accountId)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
-        this.accountsRepository.deleteById(account_id)
+        this.accountsRepository.deleteById(accountId)
     }
 
     @DeleteMapping("/api/users/{user_id}/accounts/")
-    fun deleteAccountByName(@RequestParam("name") name: String) {
+    fun deleteAccountByName(@RequestParam("name", required = true) name: String) {
         if (!this.accountsRepository.existsByName(name)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
         this.accountsRepository.deleteByName(name)
+    }
+
+    @DeleteMapping("/api/users/{user_id}/accounts/all")
+    fun deleteAllAccounts() {
+        val allAccounts = this.accountsRepository.findAll()
+
+        allAccounts.forEach {
+            this.accountsRepository.deleteById(it.id)
+        }
     }
 }

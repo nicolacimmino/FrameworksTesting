@@ -1,6 +1,7 @@
 package com.cimminonicola.finanaceplanneraccounts.errors
 
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -35,5 +36,12 @@ class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun inputInvalidHandler(exception: InputInvalidApiException): ApiError {
         return this.render(exception.message ?: "", "INPUT_INVALID")
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun missingParameterHandler(exception: MissingServletRequestParameterException): ApiError {
+        return this.render(exception.message, "MISSING_PARAMETER2")
     }
 }
