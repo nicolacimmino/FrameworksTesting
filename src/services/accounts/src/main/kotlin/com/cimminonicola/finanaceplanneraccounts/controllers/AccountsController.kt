@@ -38,6 +38,11 @@ class AccountsController(
 
     @DeleteMapping("/api/users/{user_id}/accounts/")
     fun deleteAccountByName(@RequestParam("name", required = true) name: String) {
+
+        if (name == "*") {
+            return this.deleteAllAccounts()
+        }
+
         if (!this.accountsRepository.existsByName(name)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
@@ -45,8 +50,7 @@ class AccountsController(
         this.accountsRepository.deleteByName(name)
     }
 
-    @DeleteMapping("/api/users/{user_id}/accounts/all")
-    fun deleteAllAccounts() {
+    private fun deleteAllAccounts() {
         val allAccounts = this.accountsRepository.findAll()
 
         allAccounts.forEach {
