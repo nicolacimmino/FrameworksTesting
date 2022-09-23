@@ -12,7 +12,9 @@ class Account(
     var name: String,
     var currency: String
 ) {
-    @Id @GeneratedValue lateinit var id: String
+    @Id
+    @GeneratedValue
+    lateinit var id: String
 
     private var internalReference: String = UUID.randomUUID().toString()
 
@@ -21,7 +23,7 @@ class Account(
         return internalReference
     }
 
-    @JsonProperty()
+    @JsonProperty
     fun setInternalReference(internalReference: String?) {
         if (internalReference == null) {
             this.internalReference = UUID.randomUUID().toString()

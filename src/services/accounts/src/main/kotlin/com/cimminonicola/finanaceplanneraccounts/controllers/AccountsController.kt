@@ -7,16 +7,17 @@ import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiExcep
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("api")
 class AccountsController(
     private val accountsRepository: AccountsRepository
 ) {
 
-    @GetMapping("/api/users/{user_id}/accounts")
+    @GetMapping("users/{user_id}/accounts")
     fun getAllAccounts(): List<Account> {
         return this.accountsRepository.findAll()
     }
 
-    @PostMapping("/api/users/{user_id}/accounts")
+    @PostMapping("users/{user_id}/accounts")
     fun addAccount(@RequestBody account: Account): Account {
         if (this.accountsRepository.existsByName(account.name)) {
             throw InputInvalidApiException("Account exists")
@@ -27,7 +28,7 @@ class AccountsController(
         return account
     }
 
-    @DeleteMapping("/api/users/{user_id}/accounts/{account_id}")
+    @DeleteMapping("users/{user_id}/accounts/{account_id}")
     fun deleteAccount(@PathVariable("account_id") accountId: String) {
         if (!this.accountsRepository.existsById(accountId)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
@@ -36,7 +37,7 @@ class AccountsController(
         this.accountsRepository.deleteById(accountId)
     }
 
-    @DeleteMapping("/api/users/{user_id}/accounts/")
+    @DeleteMapping("users/{user_id}/accounts/")
     fun deleteAccountByName(@RequestParam("name", required = true) name: String) {
 
         if (name == "*") {
