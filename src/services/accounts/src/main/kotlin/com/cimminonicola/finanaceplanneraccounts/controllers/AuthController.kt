@@ -4,6 +4,7 @@ import com.cimminonicola.finanaceplanneraccounts.dtos.JWTTokenResponseDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.LoginDTO
 import com.cimminonicola.finanaceplanneraccounts.entities.UsersRepository
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
@@ -32,7 +33,8 @@ class AuthController(private val usersRepository: UsersRepository) {
         }
 
         val jwt = Jwts.builder()
-            .setIssuer(user.id)
+            .setIssuer("exmaple.com")
+            .setSubject(user.id)
             .setExpiration(Date(System.currentTimeMillis() + 1000 * ttlSeconds))
             .signWith(this.getKey())
             .compact()
@@ -42,6 +44,13 @@ class AuthController(private val usersRepository: UsersRepository) {
         jwtResponse.ttl = ttlSeconds
 
         return ResponseEntity.ok(jwtResponse)
+    }
+
+    fun validateJwt(jwt: String) : Claims {
+        return Jwts.parserBuilder()
+            .setSigningKey(this.getKey())
+            .build()
+            .parseClaimsJws(jwt).body
     }
 
     private fun getKey(): Key {
