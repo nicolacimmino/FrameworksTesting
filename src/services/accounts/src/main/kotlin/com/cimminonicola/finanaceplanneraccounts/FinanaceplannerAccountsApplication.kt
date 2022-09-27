@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.runApplication
 
 @SpringBootApplication(exclude = [DataSourceAutoConfiguration::class, SecurityAutoConfiguration::class])
-class FinanaceplannerAccountsApplication
+class FinanaceplannerAccountsApplication {
 
-fun main(args: Array<String>) {
-    runApplication<FinanaceplannerAccountsApplication>(*args)
+    fun main(args: Array<String>) {
+        runApplication<FinanaceplannerAccountsApplication>(*args)
+    }
 }

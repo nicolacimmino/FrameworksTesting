@@ -7,16 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 
+// TODO: define an errorDTO and change render to createErrorDTO
+
 @ControllerAdvice
 class ApiErrorHandler {
-
-    fun render(message: String, error_code: String): ApiError {
-        return ApiError(
-            message = message,
-            error_code = error_code
-        )
-    }
-
     @ResponseBody
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -50,5 +44,12 @@ class ApiErrorHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun missingParameterHandler(exception: UnauthorizedApiException): ApiError {
         return this.render(exception.message ?: "Unauthorized", "UNAUTHORIZED")
+    }
+
+    fun render(message: String, error_code: String): ApiError {
+        return ApiError(
+            message = message,
+            error_code = error_code
+        )
     }
 }
