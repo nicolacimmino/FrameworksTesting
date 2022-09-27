@@ -1,5 +1,6 @@
 package com.cimminonicola.finanaceplanneraccounts.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -27,6 +28,7 @@ class User {
     var email: String = ""
 
     @Column
+    @JsonIgnore
     var password: String = ""
         get() = field
         set(value) {

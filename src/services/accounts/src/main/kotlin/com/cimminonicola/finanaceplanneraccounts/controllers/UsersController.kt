@@ -28,7 +28,7 @@ class UsersController(private val usersRepository: UsersRepository) {
     @GetMapping("users/{user_id}")
     fun getUser(
         @RequestHeader("Authorization") auth: String?,
-        @PathParam("user_id") userId: String?
+        @PathVariable("user_id") userId: String?
     ): User {
         val authController = AuthController(usersRepository)
 
@@ -42,7 +42,7 @@ class UsersController(private val usersRepository: UsersRepository) {
         try {
             var jwtBody = authController.validateJwt(jwt)
 
-            if (jwtBody.subject != userId) {
+            if (!jwtBody.subject.equals(userId)) {
                 throw UnauthorizedApiException()
             }
 
@@ -50,7 +50,7 @@ class UsersController(private val usersRepository: UsersRepository) {
                 ?: throw UnauthorizedApiException()
 
         } catch (e: Exception) {
-            throw UnauthorizedApiException()
+            throw e
         }
 
 
