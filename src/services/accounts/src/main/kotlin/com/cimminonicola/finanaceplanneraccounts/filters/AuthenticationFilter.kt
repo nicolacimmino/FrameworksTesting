@@ -2,7 +2,9 @@ package com.cimminonicola.finanaceplanneraccounts.filters
 
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
+import com.cimminonicola.finanaceplanneraccounts.dtos.ApiErrorDTO
 import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +18,9 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class AuthenticationFilter : OncePerRequestFilter() {
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     lateinit var applicationStatus: ApplicationStatus
@@ -47,9 +52,8 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
             val userId = results.first()
 
-            // TODO: if we throw here we get to FilterChainExceptionHandler but with a servletException, needs fixing.
             if (jwtBody.subject != userId) {
-                throw UnauthorizedApiException()
+                return this.respondWithUnathorized(response)
             }
 
             this.applicationStatus.authorizedUserId = jwtBody.subject
@@ -69,5 +73,13 @@ class AuthenticationFilter : OncePerRequestFilter() {
             .setSigningKey(this.applicationStatus.getJWTKey())
             .build()
             .parseClaimsJws(jwt).body
+    }
+
+    private fun respondWithUnathorized(response: HttpServletResponse) {
+        val apiErrorDTO = ApiErrorDTO("Unauthorized", "UNAUTHORIZED")
+
+        response.contentType = "application/json"
+        response.status = HttpServletResponse.SC_BAD_REQUEST
+        response.writer.write(this.objectMapper.writeValueAsString(apiErrorDTO))
     }
 }
