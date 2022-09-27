@@ -25,8 +25,8 @@ class AuthenticationFilter : OncePerRequestFilter() {
         println("filter!")
 
         // TODO: if we throw here we get to FilterChainExceptionHandler but with a servletException, needs fixing.
-        // throw UnauthorizedApiException()
+        //throw UnauthorizedApiException()
 
-        //filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }
