@@ -2,7 +2,6 @@ package com.cimminonicola.finanaceplanneraccounts.filters
 
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
-import com.cimminonicola.finanaceplanneraccounts.dtos.ApiErrorDTO
 import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.Claims
@@ -31,8 +30,6 @@ class AuthenticationFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        // TODO: extract user_id from path and validate against JWT claim
-
         val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION) ?: ""
 
         val jwt = authorizationHeader
@@ -76,10 +73,10 @@ class AuthenticationFilter : OncePerRequestFilter() {
     }
 
     private fun respondWithUnathorized(response: HttpServletResponse) {
-        val apiErrorDTO = ApiErrorDTO("Unauthorized", "UNAUTHORIZED")
+        val apiErrorDTO = UnauthorizedApiException().toDTO()
 
         response.contentType = "application/json"
-        response.status = HttpServletResponse.SC_BAD_REQUEST
+        response.status = HttpServletResponse.SC_UNAUTHORIZED
         response.writer.write(this.objectMapper.writeValueAsString(apiErrorDTO))
     }
 }

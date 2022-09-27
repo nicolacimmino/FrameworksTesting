@@ -1,4 +1,10 @@
 package com.cimminonicola.finanaceplanneraccounts.errors
 
-class InputInvalidApiException(message: String?) : Exception(message) {
+import org.springframework.http.HttpStatus
+
+class InputInvalidApiException(message: String = "Input Invalid") : ApiException(message) {
+    init {
+        this.errorCode = "ERROR_INPUT_INVALID"
+        this.httpStatus = HttpStatus.BAD_REQUEST
+    }
 }

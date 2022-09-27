@@ -1,4 +1,10 @@
 package com.cimminonicola.finanaceplanneraccounts.errors
 
-class UnauthorizedApiException(message: String? = null) : Exception(message) {
+import org.springframework.http.HttpStatus
+
+class UnauthorizedApiException(message: String = "Unauthorized") : ApiException(message) {
+    init {
+        this.errorCode = "ERROR_UNAUTHORIZED"
+        this.httpStatus = HttpStatus.UNAUTHORIZED
+    }
 }
