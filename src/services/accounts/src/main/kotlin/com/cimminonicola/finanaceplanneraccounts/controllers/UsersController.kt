@@ -18,10 +18,10 @@ class UsersController(private val usersRepository: UsersRepository) {
     @PostMapping("users")
     fun register(@RequestBody body: RegisterUserDTO): User {
         val user = User()
-
         user.name = body.name
         user.email = body.email
         user.password = body.password
+
 
         this.usersRepository.save(user)
 

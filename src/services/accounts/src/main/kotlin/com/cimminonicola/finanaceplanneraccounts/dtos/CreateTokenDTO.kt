@@ -1,6 +1,6 @@
 package com.cimminonicola.finanaceplanneraccounts.dtos
 
-class CreateTokenDTO {
-    val email = ""
-    val password = ""
-}
+data class CreateTokenDTO(
+    var email: String,
+    var password: String
+)
