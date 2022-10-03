@@ -16,6 +16,6 @@ data class ApiErrorDTO(
     var timestamp: LocalDateTime? = null
 
     init {
-        this.timestamp = LocalDateTime.now(ZoneId.of("UTC"))
+        timestamp = LocalDateTime.now(ZoneId.of("UTC"))
     }
 }

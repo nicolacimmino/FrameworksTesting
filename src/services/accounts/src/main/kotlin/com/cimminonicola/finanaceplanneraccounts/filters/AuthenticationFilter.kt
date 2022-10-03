@@ -2,6 +2,7 @@ package com.cimminonicola.finanaceplanneraccounts.filters
 
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
+import com.cimminonicola.finanaceplanneraccounts.ConfigProperties
 import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.Claims
@@ -24,6 +25,9 @@ class AuthenticationFilter : OncePerRequestFilter() {
     @Autowired
     lateinit var applicationStatus: ApplicationStatus
 
+    @Autowired
+    lateinit var configProperties: ConfigProperties
+
     @Override
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -37,28 +41,28 @@ class AuthenticationFilter : OncePerRequestFilter() {
             .substringAfter("bearer ")
 
         try {
-            var jwtBody = this.validateJwt(jwt)
+            val jwtBody = validateJwt(jwt)
 
-            var results = "\\/api\\/users\\/([^\\/]*).*".toRegex()
+            val results = "/api/users/([^/]*).*".toRegex()
                 .find(request.servletPath)?.destructured?.toList()
-                ?: return this.respondWithUnathorized(response)
+                ?: return respondWithUnauthorized(response)
 
             if (results.isEmpty()) {
-                return this.respondWithUnathorized(response)
+                return respondWithUnauthorized(response)
             }
 
             val userId = results.first()
 
             if (jwtBody.subject != userId) {
-                return this.respondWithUnathorized(response)
+                return respondWithUnauthorized(response)
             }
 
-            this.applicationStatus.authorizedUserId = jwtBody.subject
+            applicationStatus.authorizedUserId = jwtBody.subject
         } catch (e: Exception) {
-            return this.respondWithUnathorized(response)
+            return respondWithUnauthorized(response)
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response)
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
@@ -67,16 +71,16 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
     private fun validateJwt(jwt: String): Claims {
         return Jwts.parserBuilder()
-            .setSigningKey(this.applicationStatus.getJWTKey())
+            .setSigningKey(configProperties.getTokenKey())
             .build()
             .parseClaimsJws(jwt).body
     }
 
-    private fun respondWithUnathorized(response: HttpServletResponse) {
+    private fun respondWithUnauthorized(response: HttpServletResponse) {
         val apiErrorDTO = UnauthorizedApiException().toDTO()
 
         response.contentType = "application/json"
         response.status = HttpServletResponse.SC_UNAUTHORIZED
-        response.writer.write(this.objectMapper.writeValueAsString(apiErrorDTO))
+        response.writer.write(objectMapper.writeValueAsString(apiErrorDTO))
     }
 }

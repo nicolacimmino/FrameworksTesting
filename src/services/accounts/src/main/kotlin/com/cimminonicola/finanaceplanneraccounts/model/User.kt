@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Document(collection = "users")
-// @CompoundIndex(name = "age_idx", def = "{'lastName': 1, 'age': -1}")
 class User {
 
 // TODO: this is supposed to work, but the field gets serialized anyway and throws an error.
@@ -30,12 +29,11 @@ class User {
     @Column
     @JsonIgnore
     var password: String = ""
-        get() = field
         set(value) {
             field = BCryptPasswordEncoder().encode(value)
         }
 
-    fun isPasswordValid(password: String): Boolean {
-        return BCryptPasswordEncoder().matches(password, this.password)
+    fun isPasswordValid(passwordToValidate: String): Boolean {
+        return BCryptPasswordEncoder().matches(passwordToValidate, password)
     }
 }

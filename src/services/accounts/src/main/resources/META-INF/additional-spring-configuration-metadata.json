@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "financeplanner.jwtkey",
+      "type": "java.lang.String",
+      "description": "Base64 encoded key for JWT."
+    }
+  ]
+}

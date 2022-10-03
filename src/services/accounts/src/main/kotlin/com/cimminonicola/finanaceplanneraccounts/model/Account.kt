@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Document(collection = "accounts")
-class Account(
+data class Account(
     var name: String,
     var currency: String,
     @JsonIgnore
@@ -20,19 +20,13 @@ class Account(
 
     private var internalReference: String = UUID.randomUUID().toString()
 
-
     @JsonIgnore
     fun getInternalReference(): String {
         return internalReference
     }
 
     @JsonProperty
-    fun setInternalReference(internalReference: String?) {
-        if (internalReference == null) {
-            this.internalReference = UUID.randomUUID().toString()
-
-            return
-        }
-        this.internalReference = internalReference
+    fun setInternalReference(value: String?) {
+        internalReference = value ?: UUID.randomUUID().toString()
     }
 }

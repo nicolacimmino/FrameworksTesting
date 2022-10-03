@@ -23,17 +23,17 @@ class AccountsController(
     }
 
     @PostMapping("users/*/accounts")
-    fun addAccount(@RequestBody createAccount: CreateAccountDTO): Account {
+    fun addAccount(@RequestBody createAccountRequest: CreateAccountDTO): Account {
         if (accountDataSource
                 .findAllByUserId(applicationStatus.authorizedUserId)
-                .any { it.name == createAccount.name }
+                .any { it.name == createAccountRequest.name }
         ) {
             throw InputInvalidApiException("Duplicate account name")
         }
 
         val account = Account(
-            createAccount.name,
-            createAccount.currency,
+            createAccountRequest.name,
+            createAccountRequest.currency,
             applicationStatus.authorizedUserId
         )
 

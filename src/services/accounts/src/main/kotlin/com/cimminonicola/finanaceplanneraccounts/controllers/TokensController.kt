@@ -1,6 +1,6 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
-import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
+import com.cimminonicola.finanaceplanneraccounts.ConfigProperties
 import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
@@ -17,28 +17,27 @@ import java.util.*
 @RestController
 @RequestMapping("api/tokens")
 class TokensController(private val usersRepository: UserDataSource) {
-    @Autowired
-    lateinit var applicationStatus: ApplicationStatus
 
-    @PostMapping("")
-    fun login(@RequestBody body: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
+    @Autowired
+    lateinit var configProperties: ConfigProperties
+
+    @PostMapping
+    fun login(@RequestBody createTokenRequest: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
         val ttlSeconds = 60 * 60 * 24
-        val user = this.usersRepository.findByEmail(body.email)
+        val user = usersRepository.findByEmail(createTokenRequest.email)
             ?: throw ResourceNotFoundApiException("user/password invalid")
 
-        if (!user.isPasswordValid(body.password)) {
+        if (!user.isPasswordValid(createTokenRequest.password)) {
             throw ResourceNotFoundApiException("user/password invalid")
         }
 
         val jwt = Jwts.builder()
-            .setIssuer("exmaple.com")
+            .setIssuer("example.com")
             .setSubject(user.id)
             .setExpiration(Date(System.currentTimeMillis() + 1000 * ttlSeconds))
-            .signWith(this.applicationStatus.getJWTKey())
+            .signWith(configProperties.getTokenKey())
             .compact()
 
-        val jwtResponse = CreateTokenResponseDTO(jwt, ttlSeconds, user.id)
-
-        return ResponseEntity.ok(jwtResponse)
+        return ResponseEntity.ok(CreateTokenResponseDTO(jwt, ttlSeconds, user.id))
     }
 }

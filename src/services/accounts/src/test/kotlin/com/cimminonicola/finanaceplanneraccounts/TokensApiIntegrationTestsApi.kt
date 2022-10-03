@@ -1,10 +1,9 @@
 package com.cimminonicola.finanaceplanneraccounts
 
+import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
-import com.cimminonicola.finanaceplanneraccounts.datasource.AccountDataSource
 import com.cimminonicola.finanaceplanneraccounts.model.User
-import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -18,7 +17,7 @@ import org.springframework.http.HttpStatus
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TokensApiIntegrationTestsApi(
-    @Autowired val restTemplate: TestRestTemplate, @Autowired val accountsRepository: AccountDataSource
+    @Autowired val restTemplate: TestRestTemplate
 ) {
     @Autowired
     lateinit var usersRepository: UserDataSource
@@ -27,25 +26,25 @@ class TokensApiIntegrationTestsApi(
     fun setup() {
         println("Tests setup.")
 
-        var testUserId = this.usersRepository.findByEmail("test@example.com")?.id
+        val testUserId = usersRepository.findByEmail("test@example.com")?.id
 
         if (testUserId == null) {
-            var user = User()
+            val user = User()
 
             user.name = "testuser"
             user.email = "test@example.com"
             user.password = "testpass"
 
-            this.usersRepository.save(user)
+            usersRepository.save(user)
         }
     }
 
     @AfterAll
     fun cleanup() {
-        var testUserId = this.usersRepository.findByEmail("test@example.com")?.id
+        val testUserId = usersRepository.findByEmail("test@example.com")?.id
 
         if (testUserId != null) {
-            this.usersRepository.deleteById(testUserId)
+            usersRepository.deleteById(testUserId)
         }
     }
 

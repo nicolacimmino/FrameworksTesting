@@ -1,11 +1,11 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
-import com.cimminonicola.finanaceplanneraccounts.dtos.CreateUserDTO
-import com.cimminonicola.finanaceplanneraccounts.model.User
 import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
+import com.cimminonicola.finanaceplanneraccounts.dtos.CreateUserDTO
 import com.cimminonicola.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
+import com.cimminonicola.finanaceplanneraccounts.model.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
@@ -17,17 +17,17 @@ class UsersController(private val usersRepository: UserDataSource) {
     lateinit var applicationStatus: ApplicationStatus
 
     @PostMapping("users")
-    fun register(@RequestBody body: CreateUserDTO): User {
+    fun register(@RequestBody createUserRequest: CreateUserDTO): User {
 
-        // TODO: this is supposed to be enforeced by the model unique constant but doesn't work!
-        if(usersRepository.findByEmail(body.email) != null) {
+        // TODO: this is supposed to be enforced by the model unique constraint but doesn't work!
+        if (usersRepository.findByEmail(createUserRequest.email) != null) {
             throw InputInvalidApiException("duplicate email")
         }
 
         val user = User()
-        user.name = body.name
-        user.email = body.email
-        user.password = body.password
+        user.name = createUserRequest.name
+        user.email = createUserRequest.email
+        user.password = createUserRequest.password
 
         return usersRepository.save(user)
     }
@@ -36,7 +36,7 @@ class UsersController(private val usersRepository: UserDataSource) {
     fun getUser(
         @PathVariable("user_id") userId: String?
     ): User {
-        if (this.applicationStatus.authorizedUserId != userId) {
+        if (applicationStatus.authorizedUserId != userId) {
             throw UnauthorizedApiException()
         }
 
