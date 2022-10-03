@@ -1,21 +1,15 @@
 package com.cimminonicola.finanaceplanneraccounts.dtos
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 data class ApiErrorDTO(
     var error: String,
     var error_code: String,
     @JsonIgnore
-    var httpStatus: HttpStatus
-) {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd hh:mm:ss")
-    var timestamp: LocalDateTime? = null
-
-    init {
-        timestamp = LocalDateTime.now(ZoneId.of("UTC"))
-    }
-}
+    var httpStatus: HttpStatus?,
+    var timestamp: String = LocalDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_DATE_TIME)
+)

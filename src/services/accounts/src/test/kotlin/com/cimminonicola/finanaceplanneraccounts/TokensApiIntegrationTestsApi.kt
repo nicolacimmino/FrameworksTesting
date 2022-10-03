@@ -1,6 +1,7 @@
 package com.cimminonicola.finanaceplanneraccounts
 
 import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
+import com.cimminonicola.finanaceplanneraccounts.dtos.ApiErrorDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
 import com.cimminonicola.finanaceplanneraccounts.model.User
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,14 +66,14 @@ class TokensApiIntegrationTestsApi(
     @Test
     fun `Cannot get a token with bad user`() {
         val createTokenDTO = CreateTokenDTO("dummyuser@example.com", "awrongpassword")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, ApiErrorDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
     @Test
     fun `Cannot get a token with bad password`() {
         val createTokenDTO = CreateTokenDTO("test@example.com", "awrongpassword")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, ApiErrorDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 }
