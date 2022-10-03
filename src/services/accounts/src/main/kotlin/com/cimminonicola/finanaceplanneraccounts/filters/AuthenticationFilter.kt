@@ -41,10 +41,10 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
             var results = "\\/api\\/users\\/([^\\/]*).*".toRegex()
                 .find(request.servletPath)?.destructured?.toList()
-                ?: throw UnauthorizedApiException()
+                ?: return this.respondWithUnathorized(response)
 
             if (results.isEmpty()) {
-                throw UnauthorizedApiException()
+                return this.respondWithUnathorized(response)
             }
 
             val userId = results.first()
@@ -55,7 +55,7 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
             this.applicationStatus.authorizedUserId = jwtBody.subject
         } catch (e: Exception) {
-            throw UnauthorizedApiException()
+            return this.respondWithUnathorized(response)
         }
 
         filterChain.doFilter(request, response);

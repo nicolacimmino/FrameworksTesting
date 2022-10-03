@@ -1,9 +1,12 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
+import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
 import com.cimminonicola.finanaceplanneraccounts.datasource.AccountDataSource
+import com.cimminonicola.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.cimminonicola.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import com.cimminonicola.finanaceplanneraccounts.model.Account
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -11,57 +14,57 @@ import org.springframework.web.bind.annotation.*
 class AccountsController(
     private val accountDataSource: AccountDataSource
 ) {
+    @Autowired
+    lateinit var applicationStatus: ApplicationStatus
 
-    @GetMapping("users/{user_id}/accounts")
-    fun getAllAccounts(@PathVariable("user_id") userId: String): List<Account> {
-        return this.accountDataSource.findAllByUserId(userId)
+    @GetMapping("users/*/accounts")
+    fun getAllAccounts(): List<Account> {
+        return accountDataSource.findAllByUserId(applicationStatus.authorizedUserId)
     }
 
-    // TODO: define a createAccountDTO and use instead so not all all fields can be forced by the request
-    @PostMapping("users/{user_id}/accounts")
-    fun addAccount(@PathVariable("user_id") userId: String, @RequestBody account: Account): Account {
-        if (this.accountDataSource
-                .findAllByUserId(userId)
-                .any { it.name == account.name }
+    @PostMapping("users/*/accounts")
+    fun addAccount(@RequestBody createAccount: CreateAccountDTO): Account {
+        if (accountDataSource
+                .findAllByUserId(applicationStatus.authorizedUserId)
+                .any { it.name == createAccount.name }
         ) {
-            throw InputInvalidApiException("Account exists")
+            throw InputInvalidApiException("Duplicate account name")
         }
 
-        account.userId = userId
+        val account = Account(
+            createAccount.name,
+            createAccount.currency,
+            applicationStatus.authorizedUserId
+        )
 
-        this.accountDataSource.save(account)
-
-        return account
+        return accountDataSource.save(account)
     }
 
-    @DeleteMapping("users/{user_id}/accounts/{account_id}")
+    @DeleteMapping("users/*/accounts/{account_id}")
     fun deleteAccount(@PathVariable("account_id") accountId: String) {
-        if (!this.accountDataSource.existsById(accountId)) {
+        if (!accountDataSource
+                .findAllByUserId(applicationStatus.authorizedUserId)
+                .any { it.id == accountId }
+        ) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
-        this.accountDataSource.deleteById(accountId)
+        accountDataSource.deleteById(accountId)
     }
 
-    @DeleteMapping("users/{user_id}/accounts/")
+    @DeleteMapping("users/*/accounts/")
     fun deleteAccountByName(@RequestParam("name", required = true) name: String) {
 
         if (name == "*") {
-            return this.deleteAllAccounts()
+            accountDataSource.deleteByUserId(applicationStatus.authorizedUserId)
+
+            return
         }
 
-        if (!this.accountDataSource.existsByName(name)) {
+        if (!accountDataSource.existsByName(name)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
-        this.accountDataSource.deleteByName(name)
-    }
-
-    private fun deleteAllAccounts() {
-        val allAccounts = this.accountDataSource.findAll()
-
-        allAccounts.forEach {
-            this.accountDataSource.deleteById(it.id)
-        }
+        accountDataSource.deleteByName(name)
     }
 }

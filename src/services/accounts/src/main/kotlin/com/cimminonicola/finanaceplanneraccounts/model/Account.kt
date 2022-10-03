@@ -10,7 +10,9 @@ import javax.persistence.Id
 @Document(collection = "accounts")
 class Account(
     var name: String,
-    var currency: String
+    var currency: String,
+    @JsonIgnore
+    var userId: String
 ) {
     @Id
     @GeneratedValue
@@ -18,8 +20,6 @@ class Account(
 
     private var internalReference: String = UUID.randomUUID().toString()
 
-    @JsonIgnore
-    lateinit var userId: String
 
     @JsonIgnore
     fun getInternalReference(): String {

@@ -8,7 +8,7 @@ import javax.crypto.spec.SecretKeySpec
 
 @Component
 class ApplicationStatus {
-    var authorizedUserId: String? = null
+    lateinit var authorizedUserId: String
 
     fun getJWTKey(): Key {
         // TODO: move elsewhere and get from a config file.
