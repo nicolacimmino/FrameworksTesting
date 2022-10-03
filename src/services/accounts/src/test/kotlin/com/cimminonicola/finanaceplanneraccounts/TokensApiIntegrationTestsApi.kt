@@ -27,14 +27,17 @@ class TokensApiIntegrationTestsApi(
     fun setup() {
         println("Tests setup.")
 
-        var user = User()
+        var testUserId = this.usersRepository.findByEmail("test@example.com")?.id
 
-        user.name = "testuser"
-        user.email = "test@example.com"
-        user.password = "testpass"
+        if (testUserId == null) {
+            var user = User()
 
-        this.usersRepository.save(user)
+            user.name = "testuser"
+            user.email = "test@example.com"
+            user.password = "testpass"
 
+            this.usersRepository.save(user)
+        }
     }
 
     @AfterAll
@@ -57,6 +60,19 @@ class TokensApiIntegrationTestsApi(
         assertThat(tokenResponse).isNotNull
         assertThat(tokenResponse?.token).isNotNull
         assertThat(tokenResponse?.ttl).isNotNull
+    }
 
+    @Test
+    fun `Cannot get a token with bad user`() {
+        val createTokenDTO = CreateTokenDTO("dummyuser@example.com", "awrongpassword")
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, JWTTokenResponseDTO::class.java)
+        assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `Cannot get a token with bad password`() {
+        val createTokenDTO = CreateTokenDTO("test@example.com", "awrongpassword")
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, JWTTokenResponseDTO::class.java)
+        assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 }
