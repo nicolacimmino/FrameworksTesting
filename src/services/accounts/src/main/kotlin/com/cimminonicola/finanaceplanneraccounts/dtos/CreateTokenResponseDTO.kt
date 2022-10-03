@@ -1,6 +1,7 @@
 package com.cimminonicola.finanaceplanneraccounts.dtos
 
-class CreateTokenResponseDTO {
-    var token = ""
-    var ttl = 0
-}
+data class CreateTokenResponseDTO(
+    var token: String,
+    var ttl: Int,
+    var user_id: String
+)

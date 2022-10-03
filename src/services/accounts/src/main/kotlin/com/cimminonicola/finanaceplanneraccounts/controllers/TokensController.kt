@@ -1,9 +1,9 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
+import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
-import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,9 +37,7 @@ class TokensController(private val usersRepository: UserDataSource) {
             .signWith(this.applicationStatus.getJWTKey())
             .compact()
 
-        val jwtResponse = CreateTokenResponseDTO()
-        jwtResponse.token = jwt
-        jwtResponse.ttl = ttlSeconds
+        val jwtResponse = CreateTokenResponseDTO(jwt, ttlSeconds, user.id)
 
         return ResponseEntity.ok(jwtResponse)
     }

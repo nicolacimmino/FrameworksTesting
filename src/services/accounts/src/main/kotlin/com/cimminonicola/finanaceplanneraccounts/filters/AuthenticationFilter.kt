@@ -39,7 +39,7 @@ class AuthenticationFilter : OncePerRequestFilter() {
         try {
             var jwtBody = this.validateJwt(jwt)
 
-            var results = "\\/api\\/users\\/([^\\/]*)".toRegex()
+            var results = "\\/api\\/users\\/([^\\/]*).*".toRegex()
                 .find(request.servletPath)?.destructured?.toList()
                 ?: throw UnauthorizedApiException()
 

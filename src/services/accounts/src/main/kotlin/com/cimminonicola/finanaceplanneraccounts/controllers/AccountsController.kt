@@ -1,40 +1,46 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
-import com.cimminonicola.finanaceplanneraccounts.model.Account
 import com.cimminonicola.finanaceplanneraccounts.datasource.AccountDataSource
 import com.cimminonicola.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
+import com.cimminonicola.finanaceplanneraccounts.model.Account
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
 class AccountsController(
-    private val accountsRepository: AccountDataSource
+    private val accountDataSource: AccountDataSource
 ) {
 
     @GetMapping("users/{user_id}/accounts")
-    fun getAllAccounts(): List<Account> {
-        return this.accountsRepository.findAll()
+    fun getAllAccounts(@PathVariable("user_id") userId: String): List<Account> {
+        return this.accountDataSource.findAllByUserId(userId)
     }
 
+    // TODO: define a createAccountDTO and use instead so not all all fields can be forced by the request
     @PostMapping("users/{user_id}/accounts")
-    fun addAccount(@RequestBody account: Account): Account {
-        if (this.accountsRepository.existsByName(account.name)) {
+    fun addAccount(@PathVariable("user_id") userId: String, @RequestBody account: Account): Account {
+        if (this.accountDataSource
+                .findAllByUserId(userId)
+                .any { it.name == account.name }
+        ) {
             throw InputInvalidApiException("Account exists")
         }
 
-        this.accountsRepository.save(account)
+        account.userId = userId
+
+        this.accountDataSource.save(account)
 
         return account
     }
 
     @DeleteMapping("users/{user_id}/accounts/{account_id}")
     fun deleteAccount(@PathVariable("account_id") accountId: String) {
-        if (!this.accountsRepository.existsById(accountId)) {
+        if (!this.accountDataSource.existsById(accountId)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
-        this.accountsRepository.deleteById(accountId)
+        this.accountDataSource.deleteById(accountId)
     }
 
     @DeleteMapping("users/{user_id}/accounts/")
@@ -44,18 +50,18 @@ class AccountsController(
             return this.deleteAllAccounts()
         }
 
-        if (!this.accountsRepository.existsByName(name)) {
+        if (!this.accountDataSource.existsByName(name)) {
             throw ResourceNotFoundApiException("Account doesn't exist")
         }
 
-        this.accountsRepository.deleteByName(name)
+        this.accountDataSource.deleteByName(name)
     }
 
     private fun deleteAllAccounts() {
-        val allAccounts = this.accountsRepository.findAll()
+        val allAccounts = this.accountDataSource.findAll()
 
         allAccounts.forEach {
-            this.accountsRepository.deleteById(it.id)
+            this.accountDataSource.deleteById(it.id)
         }
     }
 }

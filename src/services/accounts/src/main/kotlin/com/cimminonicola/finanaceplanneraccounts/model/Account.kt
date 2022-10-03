@@ -19,6 +19,9 @@ class Account(
     private var internalReference: String = UUID.randomUUID().toString()
 
     @JsonIgnore
+    lateinit var userId: String
+
+    @JsonIgnore
     fun getInternalReference(): String {
         return internalReference
     }
