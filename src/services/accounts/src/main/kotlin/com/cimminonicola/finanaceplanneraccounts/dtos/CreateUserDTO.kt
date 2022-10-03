@@ -1,6 +1,6 @@
 package com.cimminonicola.finanaceplanneraccounts.dtos
 
-class RegisterUserDTO {
+class CreateUserDTO {
     var name: String = ""
 
     var email: String = ""

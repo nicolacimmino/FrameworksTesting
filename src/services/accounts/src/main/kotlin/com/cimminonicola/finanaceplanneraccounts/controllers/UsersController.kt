@@ -1,9 +1,9 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
-import com.cimminonicola.finanaceplanneraccounts.dtos.RegisterUserDTO
-import com.cimminonicola.finanaceplanneraccounts.entities.User
-import com.cimminonicola.finanaceplanneraccounts.entities.UsersRepository
+import com.cimminonicola.finanaceplanneraccounts.dtos.CreateUserDTO
+import com.cimminonicola.finanaceplanneraccounts.model.User
+import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
-class UsersController(private val usersRepository: UsersRepository) {
+class UsersController(private val usersRepository: UserDataSource) {
     @Autowired
     lateinit var applicationStatus: ApplicationStatus
 
     @PostMapping("users")
-    fun register(@RequestBody body: RegisterUserDTO): User {
+    fun register(@RequestBody body: CreateUserDTO): User {
         val user = User()
         user.name = body.name
         user.email = body.email

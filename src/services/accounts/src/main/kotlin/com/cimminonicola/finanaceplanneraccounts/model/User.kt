@@ -1,4 +1,4 @@
-package com.cimminonicola.finanaceplanneraccounts.entities
+package com.cimminonicola.finanaceplanneraccounts.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.mongodb.core.index.Indexed

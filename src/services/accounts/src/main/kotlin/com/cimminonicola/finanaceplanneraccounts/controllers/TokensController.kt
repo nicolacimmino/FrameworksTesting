@@ -2,8 +2,8 @@ package com.cimminonicola.finanaceplanneraccounts.controllers
 
 import com.cimminonicola.finanaceplanneraccounts.ApplicationStatus
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
-import com.cimminonicola.finanaceplanneraccounts.dtos.JWTTokenResponseDTO
-import com.cimminonicola.finanaceplanneraccounts.entities.UsersRepository
+import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
+import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,12 +16,12 @@ import java.util.*
 
 @RestController
 @RequestMapping("api/tokens")
-class TokensController(private val usersRepository: UsersRepository) {
+class TokensController(private val usersRepository: UserDataSource) {
     @Autowired
     lateinit var applicationStatus: ApplicationStatus
 
     @PostMapping("")
-    fun login(@RequestBody body: CreateTokenDTO): ResponseEntity<JWTTokenResponseDTO> {
+    fun login(@RequestBody body: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
         val ttlSeconds = 60 * 60 * 24
         val user = this.usersRepository.findByEmail(body.email)
             ?: throw ResourceNotFoundApiException("user/password invalid")
@@ -37,7 +37,7 @@ class TokensController(private val usersRepository: UsersRepository) {
             .signWith(this.applicationStatus.getJWTKey())
             .compact()
 
-        val jwtResponse = JWTTokenResponseDTO()
+        val jwtResponse = CreateTokenResponseDTO()
         jwtResponse.token = jwt
         jwtResponse.ttl = ttlSeconds
 

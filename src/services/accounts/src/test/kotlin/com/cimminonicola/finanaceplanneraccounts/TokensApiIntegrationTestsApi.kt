@@ -1,10 +1,10 @@
 package com.cimminonicola.finanaceplanneraccounts
 
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
-import com.cimminonicola.finanaceplanneraccounts.dtos.JWTTokenResponseDTO
-import com.cimminonicola.finanaceplanneraccounts.entities.AccountsRepository
-import com.cimminonicola.finanaceplanneraccounts.entities.User
-import com.cimminonicola.finanaceplanneraccounts.entities.UsersRepository
+import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
+import com.cimminonicola.finanaceplanneraccounts.datasource.AccountDataSource
+import com.cimminonicola.finanaceplanneraccounts.model.User
+import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -18,10 +18,10 @@ import org.springframework.http.HttpStatus
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TokensApiIntegrationTestsApi(
-    @Autowired val restTemplate: TestRestTemplate, @Autowired val accountsRepository: AccountsRepository
+    @Autowired val restTemplate: TestRestTemplate, @Autowired val accountsRepository: AccountDataSource
 ) {
     @Autowired
-    lateinit var usersRepository: UsersRepository
+    lateinit var usersRepository: UserDataSource
 
     @BeforeAll
     fun setup() {
@@ -52,7 +52,7 @@ class TokensApiIntegrationTestsApi(
     @Test
     fun `Can get a token`() {
         val createTokenDTO = CreateTokenDTO("test@example.com", "testpass")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, JWTTokenResponseDTO::class.java)
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
 
         val tokenResponse = entity.body
@@ -65,14 +65,14 @@ class TokensApiIntegrationTestsApi(
     @Test
     fun `Cannot get a token with bad user`() {
         val createTokenDTO = CreateTokenDTO("dummyuser@example.com", "awrongpassword")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, JWTTokenResponseDTO::class.java)
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
     @Test
     fun `Cannot get a token with bad password`() {
         val createTokenDTO = CreateTokenDTO("test@example.com", "awrongpassword")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, JWTTokenResponseDTO::class.java)
+        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 }

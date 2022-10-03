@@ -1,6 +1,6 @@
 package com.cimminonicola.finanaceplanneraccounts.dtos
 
-class JWTTokenResponseDTO {
+class CreateTokenResponseDTO {
     var token = ""
     var ttl = 0
 }

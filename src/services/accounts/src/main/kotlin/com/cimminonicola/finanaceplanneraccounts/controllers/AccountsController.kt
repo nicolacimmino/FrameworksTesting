@@ -1,7 +1,7 @@
 package com.cimminonicola.finanaceplanneraccounts.controllers
 
-import com.cimminonicola.finanaceplanneraccounts.entities.Account
-import com.cimminonicola.finanaceplanneraccounts.entities.AccountsRepository
+import com.cimminonicola.finanaceplanneraccounts.model.Account
+import com.cimminonicola.finanaceplanneraccounts.datasource.AccountDataSource
 import com.cimminonicola.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import org.springframework.web.bind.annotation.*
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("api")
 class AccountsController(
-    private val accountsRepository: AccountsRepository
+    private val accountsRepository: AccountDataSource
 ) {
 
     @GetMapping("users/{user_id}/accounts")
