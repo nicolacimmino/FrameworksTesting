@@ -4,7 +4,7 @@ import com.cimminonicola.finanaceplanneraccounts.ConfigProperties
 import com.cimminonicola.finanaceplanneraccounts.datasource.UserDataSource
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.cimminonicola.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
-import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
+import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -25,10 +25,10 @@ class TokensController(private val usersRepository: UserDataSource) {
     fun login(@RequestBody createTokenRequest: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
         val ttlSeconds = 60 * 60 * 24
         val user = usersRepository.findByEmail(createTokenRequest.email)
-            ?: throw ResourceNotFoundApiException("user/password invalid")
+            ?: throw UnauthorizedApiException("user/password invalid")
 
         if (!user.isPasswordValid(createTokenRequest.password)) {
-            throw ResourceNotFoundApiException("user/password invalid")
+            throw UnauthorizedApiException("user/password invalid")
         }
 
         val jwt = Jwts.builder()
