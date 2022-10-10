@@ -107,6 +107,12 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk</artifactId>
+            <version>1.12.8</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -6,8 +6,8 @@ import com.cimminonicola.finanaceplanneraccounts.dtos.CreateUserDTO
 import com.cimminonicola.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.cimminonicola.finanaceplanneraccounts.errors.UnauthorizedApiException
 import com.cimminonicola.finanaceplanneraccounts.model.User
+import com.cimminonicola.finanaceplanneraccounts.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*
 class UsersController(private val usersRepository: UserDataSource) {
     @Autowired
     lateinit var applicationStatus: ApplicationStatus
+
+    @Autowired
+    lateinit var userService: UserService
 
     @PostMapping("users")
     fun register(@RequestBody createUserRequest: CreateUserDTO): User {
@@ -40,6 +43,6 @@ class UsersController(private val usersRepository: UserDataSource) {
             throw UnauthorizedApiException()
         }
 
-        return usersRepository.findByIdOrNull(userId) ?: throw UnauthorizedApiException()
+        return userService.getUser(userId)
     }
 }
