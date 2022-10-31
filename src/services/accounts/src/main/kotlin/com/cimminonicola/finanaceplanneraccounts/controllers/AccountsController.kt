@@ -7,10 +7,12 @@ import com.cimminonicola.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.cimminonicola.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import com.cimminonicola.finanaceplanneraccounts.model.Account
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
+@CrossOrigin(origins = ["http://localhost:59729"])
 class AccountsController(
     private val accountDataSource: AccountDataSource
 ) {
@@ -20,6 +22,13 @@ class AccountsController(
     @GetMapping("users/*/accounts")
     fun getAllAccounts(): List<Account> {
         return accountDataSource.findAllByUserId(applicationStatus.authorizedUserId)
+    }
+
+    @GetMapping("users/*/accounts/{account_id}")
+    fun getAccount(@PathVariable("account_id") accountId: String) : Account {
+
+        return accountDataSource.findByIdOrNull(accountId) ?:
+           throw ResourceNotFoundApiException("Account doesn't exist")
     }
 
     @PostMapping("users/*/accounts")

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration
 import java.security.Key
 import javax.crypto.spec.SecretKeySpec
 
+
 @Configuration
 @ConfigurationProperties(prefix = "financeplanner")
 class ConfigProperties {

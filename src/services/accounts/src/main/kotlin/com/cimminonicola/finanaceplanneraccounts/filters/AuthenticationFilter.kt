@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
@@ -34,6 +35,10 @@ class AuthenticationFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        if (request.method == HttpMethod.OPTIONS.toString()) {
+            return filterChain.doFilter(request, response);
+        }
+
         val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION) ?: ""
 
         val jwt = authorizationHeader
