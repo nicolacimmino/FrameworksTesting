@@ -26,7 +26,8 @@ class _FinancePlannerAppState extends State<FinancePlannerApp> {
         appBar: AppBar(
           title: const Text('Finance Planner'),
         ),
-        body: const Center(child: AccountsListWidget()),
+        body:
+            const Center(child: AccountsListWidget()),
       ),
     );
   }

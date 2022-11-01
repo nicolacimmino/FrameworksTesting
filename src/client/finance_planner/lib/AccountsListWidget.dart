@@ -28,10 +28,14 @@ class _AccountsListWidgetState extends State<AccountsListWidget> {
         if (snapshot.hasData) {
           return Column(children: [
             for (Account account in snapshot.data!)
-              Container(
+              SizedBox(
                   width: 250,
                   height: 150,
-                  child: AccountWidget(account: account))
+                  child: GestureDetector(
+                      onTap: () {
+                        print("Tapped ${account.name}");
+                      },
+                      child: AccountWidget(account: account)))
           ]);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');

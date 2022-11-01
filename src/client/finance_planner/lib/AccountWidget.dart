@@ -15,14 +15,30 @@ class _AccountWidgetState extends State<AccountWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+        decoration: BoxDecoration(
+            color: Colors.lightBlueAccent,
+            border: Border.all(color: Colors.lightBlue, width: 1),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
         width: 200,
-        padding: const EdgeInsets.all(20),
+        height: 10,
+        padding: const EdgeInsets.only(left: 10, top: 10),
+        margin: const EdgeInsets.all(10),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(widget.account.name),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Icon(
+                  Icons.account_balance_outlined,
+                  color: Colors.white,
+                  size: 30.0,
+                ),
+                Text(widget.account.name,
+                    style: const TextStyle(color: Colors.white)),
+              ],
+            ),
             Text(widget.account.currency),
           ],
         ));
