@@ -16,4 +16,18 @@ class Account {
       currency: json['currency'],
     );
   }
+
+  static listFromJson(List<dynamic> json) {
+    var accounts = <Account>[];
+
+    for (var element in json) {
+      accounts.add(Account(
+        name: element['name'],
+        id: element['id'],
+        currency: element['currency'],
+      ));
+    }
+
+    return accounts;
+  }
 }
