@@ -1,10 +1,6 @@
-import 'dart:async';
-
-import 'package:finance_planner/AccountWidget.dart';
-import 'package:finance_planner/AccountsApi.dart';
 import 'package:flutter/material.dart';
 
-import 'Account.dart';
+import 'AccountsListWidget.dart';
 
 class FinancePlannerApp extends StatefulWidget {
   const FinancePlannerApp({super.key});
@@ -14,12 +10,9 @@ class FinancePlannerApp extends StatefulWidget {
 }
 
 class _FinancePlannerAppState extends State<FinancePlannerApp> {
-  late Future<Account> futureAccount;
-
   @override
   void initState() {
     super.initState();
-    futureAccount = AccountsApi.fetchAccount();
   }
 
   @override
@@ -33,7 +26,7 @@ class _FinancePlannerAppState extends State<FinancePlannerApp> {
         appBar: AppBar(
           title: const Text('Finance Planner'),
         ),
-        body: const Center(child: AccountWidget()),
+        body: const Center(child: AccountsListWidget()),
       ),
     );
   }
