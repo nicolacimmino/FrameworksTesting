@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
-@CrossOrigin(origins = ["http://localhost:53133"])
+@CrossOrigin(origins = ["http://localhost:52218"])
 class AccountsController(
     private val accountDataSource: AccountDataSource
 ) {

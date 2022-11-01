@@ -14,9 +14,17 @@ class AccountWidget extends StatefulWidget {
 class _AccountWidgetState extends State<AccountWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Text(widget.account.name),
-      Text(widget.account.currency),
-    ]);
+    return Container(
+        decoration: const BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        width: 200,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Text(widget.account.name),
+            Text(widget.account.currency),
+          ],
+        ));
   }
 }

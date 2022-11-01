@@ -27,7 +27,11 @@ class _AccountsListWidgetState extends State<AccountsListWidget> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(children: [
-            for (Account account in snapshot.data!) AccountWidget(account: account)
+            for (Account account in snapshot.data!)
+              Container(
+                  width: 250,
+                  height: 150,
+                  child: AccountWidget(account: account))
           ]);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
