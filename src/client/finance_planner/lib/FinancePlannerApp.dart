@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:finance_planner/AccountWidget.dart';
 import 'package:finance_planner/AccountsApi.dart';
 import 'package:flutter/material.dart';
 
@@ -32,21 +33,7 @@ class _FinancePlannerAppState extends State<FinancePlannerApp> {
         appBar: AppBar(
           title: const Text('Finance Planner'),
         ),
-        body: Center(
-          child: FutureBuilder<Account>(
-            future: futureAccount,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data!.name);
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
-            },
-          ),
-        ),
+        body: const Center(child: AccountWidget()),
       ),
     );
   }
