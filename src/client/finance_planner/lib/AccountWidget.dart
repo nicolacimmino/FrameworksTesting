@@ -39,7 +39,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                     style: const TextStyle(color: Colors.white)),
               ],
             ),
-            Text(widget.account.currency),
+            Text('${widget.account.balance} ${widget.account.currency}'),
           ],
         ));
   }
