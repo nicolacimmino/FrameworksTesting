@@ -1,11 +1,11 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
+import com.gmcn.finanaceplanneraccounts.ApplicationStatus
 import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
 import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.gmcn.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import com.gmcn.finanaceplanneraccounts.model.Account
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api")
 @CrossOrigin(origins = ["http://localhost:54845"])
 class AccountsController(
-    private val accountDataSource: AccountDataSource
+    private val accountDataSource: AccountDataSource,
+    private var applicationStatus: ApplicationStatus
 ) {
-    @Autowired
-    lateinit var applicationStatus: com.gmcn.finanaceplanneraccounts.ApplicationStatus
 
     @GetMapping("users/*/accounts")
     fun getAllAccounts(): List<Account> {
@@ -24,10 +23,10 @@ class AccountsController(
     }
 
     @GetMapping("users/*/accounts/{account_id}")
-    fun getAccount(@PathVariable("account_id") accountId: String) : Account {
+    fun getAccount(@PathVariable("account_id") accountId: String): Account {
 
-        return accountDataSource.findByIdOrNull(accountId) ?:
-           throw ResourceNotFoundApiException("Account doesn't exist")
+        return accountDataSource.findByIdOrNull(accountId)
+            ?: throw ResourceNotFoundApiException("Account doesn't exist")
     }
 
     @PostMapping("users/*/accounts")
