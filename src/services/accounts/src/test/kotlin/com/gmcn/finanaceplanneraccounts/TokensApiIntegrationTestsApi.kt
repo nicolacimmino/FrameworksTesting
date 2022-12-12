@@ -37,7 +37,7 @@ class TokensApiIntegrationTestsApi : IntegrationTests(
     @Test
     fun `Can get a token`() {
         val createTokenDTO = CreateTokenDTO("test@example.com", "testpass")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
+        val entity = template.postForEntity("/api/tokens", createTokenDTO, CreateTokenResponseDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
 
         val tokenResponse = entity.body
@@ -51,14 +51,14 @@ class TokensApiIntegrationTestsApi : IntegrationTests(
     fun `Cannot get a token with bad user`() {
         val createTokenDTO = CreateTokenDTO("dummyuser@example.com", "awrongpassword")
 
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, ApiErrorDTO::class.java)
+        val entity = template.postForEntity("/api/tokens", createTokenDTO, ApiErrorDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
     }
 
     @Test
     fun `Cannot get a token with bad password`() {
         val createTokenDTO = CreateTokenDTO("test@example.com", "awrongpassword")
-        val entity = restTemplate.postForEntity("/api/tokens", createTokenDTO, ApiErrorDTO::class.java)
+        val entity = template.postForEntity("/api/tokens", createTokenDTO, ApiErrorDTO::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
     }
 }

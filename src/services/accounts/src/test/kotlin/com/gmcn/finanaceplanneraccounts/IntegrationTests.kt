@@ -15,7 +15,7 @@ abstract class IntegrationTests {
     lateinit var usersRepository: UserDataSource
 
     @Autowired
-    lateinit var restTemplate: TestRestTemplate
+    lateinit var template: TestRestTemplate
 
     fun setupTestUsers() {
         println("Setting up users.")
@@ -37,8 +37,8 @@ abstract class IntegrationTests {
     fun setupRestTemplate() {
         println("Setting up RestTemplate.")
 
-        restTemplate.restTemplate.requestFactory = HttpComponentsClientHttpRequestFactory()
-        restTemplate.restTemplate.errorHandler = object : DefaultResponseErrorHandler() {
+        template.restTemplate.requestFactory = HttpComponentsClientHttpRequestFactory()
+        template.restTemplate.errorHandler = object : DefaultResponseErrorHandler() {
             @Throws(IOException::class)
             override fun hasError(response: ClientHttpResponse): Boolean {
                 val statusCode = response.statusCode
