@@ -5,6 +5,7 @@ import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
 import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.gmcn.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
+import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
 import com.gmcn.finanaceplanneraccounts.model.Account
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
@@ -25,8 +26,14 @@ class AccountsController(
     @GetMapping("users/*/accounts/{account_id}")
     fun getAccount(@PathVariable("account_id") accountId: String): Account {
 
-        return accountDataSource.findByIdOrNull(accountId)
+        val account = accountDataSource.findByIdOrNull(accountId)
             ?: throw ResourceNotFoundApiException("Account doesn't exist")
+
+        if(account.userId != applicationStatus.authorizedUserId) {
+            throw ResourceNotFoundApiException("Account doesn't exist")
+        }
+
+        return account
     }
 
     @PostMapping("users/*/accounts")

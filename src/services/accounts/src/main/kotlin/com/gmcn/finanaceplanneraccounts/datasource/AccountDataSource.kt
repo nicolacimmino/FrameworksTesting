@@ -8,4 +8,8 @@ interface AccountDataSource : MongoRepository<Account, String> {
     fun deleteByUserId(userId: String)
     fun existsByName(name: String): Boolean
     fun deleteByName(name: String)
+
+    companion object {
+
+    }
 }
