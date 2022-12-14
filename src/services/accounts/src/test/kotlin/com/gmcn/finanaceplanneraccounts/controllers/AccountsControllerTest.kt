@@ -2,6 +2,7 @@ package com.gmcn.finanaceplanneraccounts.controllers
 
 import com.gmcn.finanaceplanneraccounts.ApplicationStatus
 import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
+import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import datasource.getTestAccount
 import datasource.getTestAccountsForUser
@@ -16,6 +17,7 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 private const val testUserAId = "c4ca4238a0b923820dcc509a6f75849b"
 private const val testUserBId = "c81e728d9d4c2f636f067f89cc14862c"
@@ -72,7 +74,7 @@ class AccountsControllerTest {
         })
     }
 
-    @Test()
+    @Test
     fun getSomeoneElseAccountFails() {
         var testAccount = AccountDataSource.getTestAccountsForUser(testUserAId).entries.first().value
 
@@ -86,11 +88,31 @@ class AccountsControllerTest {
             accountsController.getAccount(testAccount.id)
         }
     }
-//
+
+    @Test
+    fun getNonExistingAccountFails() {
+        Mockito.`when`(accountDataSource.findById("NonExistentAccountId")).thenReturn(
+            Optional.ofNullable(null)
+        )
+
+        assertThrows<ResourceNotFoundApiException> {
+            accountsController.getAccount("NonExistentAccountId")
+        }
+    }
+
 //    @Test
 //    fun addAccount() {
-//    }
+//        Mockito.`when`(applicationStatus.authorizedUserId).thenReturn(testUserAId)
 //
+//        Mockito.`when`(accountDataSource.findAllByUserId(testUserAId)).thenReturn(
+//            listOf()
+//        )
+//
+//        val account = accountsController.addAccount(CreateAccountDTO("name", "currency"))
+//
+//        assertNotNull(account)
+//    }
+
 //    @Test
 //    fun deleteAccount() {
 //    }
