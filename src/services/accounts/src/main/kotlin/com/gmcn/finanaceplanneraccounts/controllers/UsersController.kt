@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
-import com.gmcn.finanaceplanneraccounts.datasource.UserDataSource
+import com.gmcn.finanaceplanneraccounts.dao.UserDao
 import com.gmcn.finanaceplanneraccounts.dtos.CreateUserDTO
 import com.gmcn.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
-class UsersController(private val usersRepository: UserDataSource) {
+class UsersController(private val usersRepository: UserDao) {
     @Autowired
     lateinit var applicationStatus: com.gmcn.finanaceplanneraccounts.ApplicationStatus
 

@@ -1,7 +1,7 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
 import com.gmcn.finanaceplanneraccounts.ApplicationStatus
-import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
+import com.gmcn.finanaceplanneraccounts.dao.AccountDao
 import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.gmcn.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api")
 @CrossOrigin(origins = ["http://localhost:54845"])
 class AccountsController(
-    private val accountDataSource: AccountDataSource,
+    private val accountDataSource: AccountDao,
     private var applicationStatus: ApplicationStatus
 ) {
 

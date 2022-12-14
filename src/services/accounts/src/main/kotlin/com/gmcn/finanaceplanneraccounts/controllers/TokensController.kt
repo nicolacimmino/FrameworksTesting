@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
-import com.gmcn.finanaceplanneraccounts.datasource.UserDataSource
+import com.gmcn.finanaceplanneraccounts.dao.UserDao
 import com.gmcn.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
 import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
@@ -15,7 +15,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("api/tokens")
-class TokensController(private val usersRepository: UserDataSource) {
+class TokensController(private val usersRepository: UserDao) {
 
     @Autowired
     lateinit var configProperties: com.gmcn.finanaceplanneraccounts.ConfigProperties
