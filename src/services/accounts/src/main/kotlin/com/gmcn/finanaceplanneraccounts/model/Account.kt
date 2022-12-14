@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import kotlin.random.Random
 
 @Document(collection = "accounts")
 data class Account(
@@ -13,7 +14,7 @@ data class Account(
     var currency: String,
     @JsonIgnore
     var userId: String,
-    var balance: Float = 0f
+    var balance: Float = Random.nextInt(0, 100).toFloat()
 ) {
     @Id
     @GeneratedValue

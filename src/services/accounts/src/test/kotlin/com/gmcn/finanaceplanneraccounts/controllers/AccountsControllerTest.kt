@@ -1,7 +1,8 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
 import com.gmcn.finanaceplanneraccounts.ApplicationStatus
-import com.gmcn.finanaceplanneraccounts.dao.AccountDao
+import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
+import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import datasource.getTestAccount
 import datasource.getTestAccountsForUser
@@ -16,6 +17,7 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 private const val testUserAId = "c4ca4238a0b923820dcc509a6f75849b"
 private const val testUserBId = "c81e728d9d4c2f636f067f89cc14862c"
@@ -27,7 +29,7 @@ class AccountsControllerTest {
     private lateinit var accountsController: AccountsController
 
     @Mock
-    lateinit var accountDataSource: AccountDao
+    lateinit var accountDataSource: AccountDataSource
 
     @Mock
     lateinit var applicationStatus: ApplicationStatus
@@ -43,23 +45,23 @@ class AccountsControllerTest {
         Mockito.`when`(applicationStatus.authorizedUserId).thenReturn(testUserAId)
 
         Mockito.`when`(accountDataSource.findAllByUserId(testUserAId)).thenReturn(
-            AccountDao.getTestAccountsForUser(testUserAId).map { it.value }
+            AccountDataSource.getTestAccountsForUser(testUserAId).map { it.value }
         )
 
         val accounts = accountsController.getAllAccounts()
 
-        assertEquals(AccountDao.getTestAccountsForUser(testUserAId).size, accounts.size)
+        assertEquals(AccountDataSource.getTestAccountsForUser(testUserAId).size, accounts.size)
         accounts.forEach { assertEquals(testUserAId, it.userId) }
     }
 
     @Test
     fun getAccount() {
-        val testAccount = AccountDao.getTestAccountsForUser(testUserAId).entries.first().value
+        var testAccount = AccountDataSource.getTestAccountsForUser(testUserAId).entries.first().value
 
         Mockito.`when`(applicationStatus.authorizedUserId).thenReturn(testUserAId)
 
         Mockito.`when`(accountDataSource.findById(testAccount.id)).thenReturn(
-            Optional.ofNullable(AccountDao.getTestAccount(testUserAId, testAccount.id))
+            Optional.ofNullable(AccountDataSource.getTestAccount(testUserAId, testAccount.id))
         )
 
         val returnedAccount = accountsController.getAccount(testAccount.id)
@@ -74,12 +76,12 @@ class AccountsControllerTest {
 
     @Test
     fun getSomeoneElseAccountFails() {
-        val testAccount = AccountDao.getTestAccountsForUser(testUserAId).entries.first().value
+        var testAccount = AccountDataSource.getTestAccountsForUser(testUserAId).entries.first().value
 
         Mockito.`when`(applicationStatus.authorizedUserId).thenReturn(testUserBId)
 
         Mockito.`when`(accountDataSource.findById(testAccount.id)).thenReturn(
-            Optional.ofNullable(AccountDao.getTestAccount(testUserAId, testAccount.id))
+            Optional.ofNullable(AccountDataSource.getTestAccount(testUserAId, testAccount.id))
         )
 
         assertThrows<ResourceNotFoundApiException> {

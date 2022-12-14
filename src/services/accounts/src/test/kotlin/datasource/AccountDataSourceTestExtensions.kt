@@ -1,12 +1,12 @@
 package datasource
 
-import com.gmcn.finanaceplanneraccounts.dao.AccountDao
+import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
 import com.gmcn.finanaceplanneraccounts.model.Account
 import kotlin.random.Random
 
-val AccountDao.Companion.userAccounts by lazy { mutableMapOf<String, MutableMap<String, Account>>() }
+val AccountDataSource.Companion.userAccounts by lazy { mutableMapOf<String, MutableMap<String, Account>>() }
 
-fun AccountDao.Companion.getTestAccountsForUser(userId: String, count: Int = 1): MutableMap<String, Account> {
+fun AccountDataSource.Companion.getTestAccountsForUser(userId: String, count: Int = 1): MutableMap<String, Account> {
     if (userAccounts.containsKey(userId)) {
         return userAccounts[userId]!!
     }
@@ -26,7 +26,7 @@ fun AccountDao.Companion.getTestAccountsForUser(userId: String, count: Int = 1):
     return accounts
 }
 
-fun AccountDao.Companion.getTestAccount(userId: String, accountId: String): Account? {
+fun AccountDataSource.Companion.getTestAccount(userId: String, accountId: String): Account? {
     if (userAccounts.containsKey(userId) && userAccounts[userId]!!.containsKey(accountId)) {
         return userAccounts[userId]!![accountId]
     }

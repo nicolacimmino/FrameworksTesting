@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts
 
-import com.gmcn.finanaceplanneraccounts.dao.UserDao
+import com.gmcn.finanaceplanneraccounts.datasource.UserDataSource
 import com.gmcn.finanaceplanneraccounts.model.User
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -18,7 +18,7 @@ import java.io.IOException
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 abstract class IntegrationTests {
     @Autowired
-    lateinit var usersRepository: UserDao
+    lateinit var usersRepository: UserDataSource
 
     @Autowired
     lateinit var template: TestRestTemplate
