@@ -2,8 +2,8 @@ package com.gmcn.finanaceplanneraccounts.controllers
 
 import com.gmcn.finanaceplanneraccounts.ApplicationStatus
 import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
+import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountResponseDTO
 import com.gmcn.finanaceplanneraccounts.dtos.GetAccountResponseDTO
-import com.gmcn.finanaceplanneraccounts.model.Account
 import com.gmcn.finanaceplanneraccounts.service.AccountService
 import org.springframework.web.bind.annotation.*
 
@@ -30,8 +30,10 @@ class AccountsController(
     }
 
     @PostMapping("users/*/accounts")
-    fun addAccount(@RequestBody createAccountRequest: CreateAccountDTO): Account {
-        return accountService.addAccount(createAccountRequest.name, createAccountRequest.currency);
+    fun addAccount(@RequestBody createAccountRequest: CreateAccountDTO): CreateAccountResponseDTO {
+        val account = accountService.addAccount(createAccountRequest.name, createAccountRequest.currency)
+
+        return CreateAccountResponseDTO(account.name, account.currency, account.balance, account.id)
     }
 
     @DeleteMapping("users/*/accounts/{account_id}")

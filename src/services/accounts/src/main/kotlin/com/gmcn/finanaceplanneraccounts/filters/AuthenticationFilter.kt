@@ -1,6 +1,5 @@
 package com.gmcn.finanaceplanneraccounts.filters
 
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
 import io.jsonwebtoken.Claims
@@ -13,7 +12,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
 
 @Component
 class AuthenticationFilter : OncePerRequestFilter() {
