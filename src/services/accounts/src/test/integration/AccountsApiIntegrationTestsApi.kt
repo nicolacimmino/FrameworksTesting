@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts.integration
 
-import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
+import com.gmcn.finanaceplanneraccounts.dao.AccountDAO
 import com.gmcn.finanaceplanneraccounts.dtos.ApiErrorDTO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountDTO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateAccountResponseDTO
@@ -30,7 +30,7 @@ const val TEST_USER_A_ACCOUNT_ADDITIONAL_CURRENCY = "EUR"
 class AccountsApiIntegrationTestsApi() : IntegrationTests(
 ) {
     @Autowired
-    private lateinit var accountDataSource: AccountDataSource
+    private lateinit var accountDAO: AccountDAO
 
     @BeforeAll
     override fun setup() {
@@ -47,19 +47,24 @@ class AccountsApiIntegrationTestsApi() : IntegrationTests(
     }
 
     private fun setupTestUserAccounts() {
-        accountDataSource.save(Account(TEST_USER_A_ACCOUNT_A_NAME, TEST_USER_A_ACCOUNT_A_CURRENCY, getTestAUserId()))
-        accountDataSource.save(Account(TEST_USER_A_ACCOUNT_B_NAME, TEST_USER_A_ACCOUNT_B_CURRENCY, getTestAUserId()))
+        accountDAO.save(Account(TEST_USER_A_ACCOUNT_A_NAME, TEST_USER_A_ACCOUNT_A_CURRENCY, getTestAUserId()))
+        accountDAO.save(Account(TEST_USER_A_ACCOUNT_B_NAME, TEST_USER_A_ACCOUNT_B_CURRENCY, getTestAUserId()))
     }
 
     private fun cleanupTestUserAccounts() {
-        accountDataSource.deleteByUserId(getTestAUserId())
-        accountDataSource.deleteByUserId(getTestBUserId())
+        for (account in accountDAO.findByUserId(getTestAUserId())) {
+            accountDAO.delete(account.id)
+        }
+
+        for (account in accountDAO.findByUserId(getTestBUserId())) {
+            accountDAO.delete(account.id)
+        }
     }
 
     @Test
     fun `Can get an account`() {
         authenticateAsUser(TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD)
-        val testAccountId = accountDataSource.findAllByUserId(getTestAUserId())
+        val testAccountId = accountDAO.findByUserId(getTestAUserId())
             .find { it.name == TEST_USER_A_ACCOUNT_B_NAME }
             ?.id
 
@@ -97,7 +102,7 @@ class AccountsApiIntegrationTestsApi() : IntegrationTests(
 
     @Test
     fun `Getting someone else account fails`() {
-        val testAccountId = accountDataSource.findAllByUserId(getTestAUserId()).first().id
+        val testAccountId = accountDAO.findByUserId(getTestAUserId()).first().id
 
         authenticateAsUser(TEST_USER_B_EMAIL, TEST_USER_B_PASSWORD)
 
@@ -132,7 +137,7 @@ class AccountsApiIntegrationTestsApi() : IntegrationTests(
     fun `Delete an account`() {
         authenticateAsUser(TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD)
 
-        val testAccountId = accountDataSource.findAllByUserId(getTestAUserId()).first().id
+        val testAccountId = accountDAO.findByUserId(getTestAUserId()).first().id
 
         val entity = template.exchange(
             "/api/users/${getTestAUserId()}/accounts/$testAccountId",
@@ -147,8 +152,6 @@ class AccountsApiIntegrationTestsApi() : IntegrationTests(
     @Test
     fun `Can get all accounts`() {
         authenticateAsUser(TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD)
-
-        val testAccountsIds = accountDataSource.findAllByUserId(getTestAUserId()).map { it.id }
 
         val entity = template.exchange(
             "/api/users/${getTestAUserId()}/accounts",

@@ -1,4 +1,4 @@
-package com.gmcn.finanaceplanneraccounts.datasource
+package com.gmcn.finanaceplanneraccounts.dao
 
 import com.gmcn.finanaceplanneraccounts.model.OwnedModel
 import org.springframework.beans.factory.annotation.Autowired
@@ -6,14 +6,14 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
-object OwnedModelDataSource {
+object OwnedModelDAO {
     const val TYPE_ACCOUNT = "account"
 
-    lateinit var accountDataSource: AccountDataSource
+    lateinit var accountDataSource: AccountMongoRepository
         @Autowired
         set
 
-    fun retrieveModel(model: String, id: String): OwnedModel? {
+    fun findOrNull(model: String, id: String): OwnedModel? {
         return when (model) {
             TYPE_ACCOUNT -> accountDataSource.findByIdOrNull(id)
             else -> {

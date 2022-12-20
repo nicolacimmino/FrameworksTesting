@@ -1,7 +1,7 @@
 package com.gmcn.finanaceplanneraccounts.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gmcn.finanaceplanneraccounts.datasource.OwnedModelDataSource
+import com.gmcn.finanaceplanneraccounts.dao.OwnedModelDAO
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
@@ -18,7 +18,7 @@ class ModelOwnershipFilter : OncePerRequestFilter() {
     private lateinit var objectMapper: ObjectMapper
 
     private var modelPathTokensMap = mapOf(
-        "accounts" to OwnedModelDataSource.TYPE_ACCOUNT
+        "accounts" to OwnedModelDAO.TYPE_ACCOUNT
     )
 
     private lateinit var modelPathToken: String
@@ -37,7 +37,7 @@ class ModelOwnershipFilter : OncePerRequestFilter() {
         val userId = result?.groupValues?.get(1) ?: ""
         val resourceId = result?.groupValues?.get(2) ?: ""
 
-        val modelInstance = OwnedModelDataSource.retrieveModel(modelPathTokensMap[modelPathToken] ?: "", resourceId)
+        val modelInstance = OwnedModelDAO.findOrNull(modelPathTokensMap[modelPathToken] ?: "", resourceId)
 
         if (modelInstance == null || !modelInstance.isOwnedBy(userId)) {
             return this.respondWithNotFound(response)

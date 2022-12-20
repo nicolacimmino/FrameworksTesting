@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
-import com.gmcn.finanaceplanneraccounts.datasource.UserDataSource
+import com.gmcn.finanaceplanneraccounts.dao.UserDAO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateUserDTO
 import com.gmcn.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
-class UsersController(private val usersRepository: UserDataSource) {
+class UsersController(
+    private val userDAO: UserDAO
+) {
     @Autowired
     lateinit var applicationStatus: com.gmcn.finanaceplanneraccounts.ApplicationStatus
 
@@ -22,7 +24,8 @@ class UsersController(private val usersRepository: UserDataSource) {
     fun register(@RequestBody createUserRequest: CreateUserDTO): User {
 
         // TODO: this is supposed to be enforced by the model unique constraint but doesn't work!
-        if (usersRepository.findByEmail(createUserRequest.email) != null) {
+        // Also, it should be moved to the service.
+        if (userDAO.findByEmailOrNull(createUserRequest.email) != null) {
             throw InputInvalidApiException("duplicate email")
         }
 
@@ -31,7 +34,7 @@ class UsersController(private val usersRepository: UserDataSource) {
         user.email = createUserRequest.email
         user.password = createUserRequest.password
 
-        return usersRepository.save(user)
+        return userDAO.save(user)
     }
 
     @GetMapping("users/{user_id}")

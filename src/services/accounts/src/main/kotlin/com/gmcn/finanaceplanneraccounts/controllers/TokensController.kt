@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts.controllers
 
-import com.gmcn.finanaceplanneraccounts.datasource.UserDataSource
+import com.gmcn.finanaceplanneraccounts.dao.UserDAO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
 import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
@@ -15,7 +15,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("api/tokens")
-class TokensController(private val usersRepository: UserDataSource) {
+class TokensController(private val userDAO: UserDAO) {
 
     @Autowired
     lateinit var configProperties: com.gmcn.finanaceplanneraccounts.ConfigProperties
@@ -23,7 +23,7 @@ class TokensController(private val usersRepository: UserDataSource) {
     @PostMapping
     fun login(@RequestBody createTokenRequest: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
         val ttlSeconds = 60 * 60 * 24
-        val user = usersRepository.findByEmail(createTokenRequest.email)
+        val user = userDAO.findByEmailOrNull(createTokenRequest.email)
             ?: throw UnauthorizedApiException("user/password invalid")
 
         if (!user.isPasswordValid(createTokenRequest.password)) {

@@ -1,6 +1,6 @@
 package com.gmcn.finanaceplanneraccounts.integration
 
-import com.gmcn.finanaceplanneraccounts.datasource.UserDataSource
+import com.gmcn.finanaceplanneraccounts.dao.UserDAO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateTokenDTO
 import com.gmcn.finanaceplanneraccounts.dtos.CreateTokenResponseDTO
 import com.gmcn.finanaceplanneraccounts.errors.UnauthorizedApiException
@@ -31,7 +31,7 @@ const val TEST_USER_B_PASSWORD = "testpassb"
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 abstract class IntegrationTests {
     @Autowired
-    lateinit var userDataSource: UserDataSource
+    lateinit var userDAO: UserDAO
 
     @Autowired
     lateinit var template: TestRestTemplate
@@ -51,16 +51,16 @@ abstract class IntegrationTests {
 
     @AfterAll
     fun cleanup() {
-        val testUserId = userDataSource.findByEmail(TEST_USER_A_EMAIL)?.id
+        val testUserId = userDAO.findByEmailOrNull(TEST_USER_A_EMAIL)?.id
 
         if (testUserId != null) {
-            userDataSource.deleteById(testUserId)
+            userDAO.delete(testUserId)
         }
     }
 
     private fun setupTestUsers() {
         // TODO: refactor!
-        val testUserId = userDataSource.findByEmail(TEST_USER_A_EMAIL)?.id
+        val testUserId = userDAO.findByEmailOrNull(TEST_USER_A_EMAIL)?.id
 
         if (testUserId == null) {
             val user = User()
@@ -69,10 +69,10 @@ abstract class IntegrationTests {
             user.email = TEST_USER_A_EMAIL
             user.password = TEST_USER_A_PASSWORD
 
-            userDataSource.save(user)
+            userDAO.save(user)
         }
 
-        val testUserBId = userDataSource.findByEmail(TEST_USER_B_EMAIL)?.id
+        val testUserBId = userDAO.findByEmailOrNull(TEST_USER_B_EMAIL)?.id
 
         if (testUserBId == null) {
             val user = User()
@@ -81,21 +81,21 @@ abstract class IntegrationTests {
             user.email = TEST_USER_B_EMAIL
             user.password = TEST_USER_B_PASSWORD
 
-            userDataSource.save(user)
+            userDAO.save(user)
         }
 
     }
 
     protected fun getTestAUserId(): String {
-        return userDataSource.findByEmail(TEST_USER_A_EMAIL)
+        return userDAO.findByEmailOrNull(TEST_USER_A_EMAIL)
             ?.id
-            ?: throw Exception("test user not found")
+            ?: throw Exception("test user A not found")
     }
 
     protected fun getTestBUserId(): String {
-        return userDataSource.findByEmail(TEST_USER_B_EMAIL)
+        return userDAO.findByEmailOrNull(TEST_USER_B_EMAIL)
             ?.id
-            ?: throw Exception("test user not foundset")
+            ?: throw Exception("test user B not found")
     }
 
     private fun setupRestTemplate() {

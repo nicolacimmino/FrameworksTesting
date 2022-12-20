@@ -1,36 +1,35 @@
 package com.gmcn.finanaceplanneraccounts.service
 
 import com.gmcn.finanaceplanneraccounts.ApplicationStatus
-import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
+import com.gmcn.finanaceplanneraccounts.dao.AccountDAO
 import com.gmcn.finanaceplanneraccounts.errors.InputInvalidApiException
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import com.gmcn.finanaceplanneraccounts.model.Account
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class AccountService(
-    private val accountDataSource: AccountDataSource,
+    private val accountDAO: AccountDAO,
     private var applicationStatus: ApplicationStatus,
 ) {
 
     fun getUserAccount(id: String): Account {
-        return accountDataSource.findByIdOrNull(id) ?: throw ResourceNotFoundApiException()
+        return accountDAO.findOrNull(id) ?: throw ResourceNotFoundApiException()
     }
 
     fun getAllUserAccounts(id: String): List<Account> {
-        return accountDataSource.findAllByUserId(applicationStatus.authorizedUserId)
+        return accountDAO.findByUserId(applicationStatus.authorizedUserId)
     }
 
     fun addAccount(name: String, currency: String): Account {
-        if (accountDataSource
-                .findAllByUserId(applicationStatus.authorizedUserId)
+        if (accountDAO
+                .findByUserId(applicationStatus.authorizedUserId)
                 .any { it.name == name }
         ) {
             throw InputInvalidApiException("Duplicate account name")
         }
 
-        return accountDataSource.save(
+        return accountDAO.save(
             Account(
                 name,
                 currency,
@@ -40,6 +39,6 @@ class AccountService(
     }
 
     fun deleteAccount(accountId: String) {
-        accountDataSource.deleteById(accountId)
+        accountDAO.delete(accountId)
     }
 }
