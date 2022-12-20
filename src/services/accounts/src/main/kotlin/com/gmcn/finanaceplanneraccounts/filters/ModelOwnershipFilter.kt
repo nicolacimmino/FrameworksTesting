@@ -1,10 +1,9 @@
 package com.gmcn.finanaceplanneraccounts.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gmcn.finanaceplanneraccounts.datasource.AccountDataSource
+import com.gmcn.finanaceplanneraccounts.datasource.OwnedModelDataSource
 import com.gmcn.finanaceplanneraccounts.errors.ResourceNotFoundApiException
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -13,12 +12,16 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class AccountOwnershipFilter : OncePerRequestFilter() {
-    @Autowired
-    private lateinit var accountsDataSource: AccountDataSource
+class ModelOwnershipFilter : OncePerRequestFilter() {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
+
+    private var modelPathTokensMap = mapOf(
+        "accounts" to OwnedModelDataSource.TYPE_ACCOUNT
+    )
+
+    private lateinit var modelPathToken: String
 
     @Override
     override fun doFilterInternal(
@@ -30,13 +33,13 @@ class AccountOwnershipFilter : OncePerRequestFilter() {
             return filterChain.doFilter(request, response)
         }
 
-        val result = Regex("/api/users/([^/]*)/accounts/([^/]*)").matchEntire(request.servletPath)
+        val result = Regex("/api/users/([^/]*)/$modelPathToken/([^/]*)").matchEntire(request.servletPath)
         val userId = result?.groupValues?.get(1) ?: ""
         val resourceId = result?.groupValues?.get(2) ?: ""
 
-        val account = accountsDataSource.findByIdOrNull(resourceId)
+        val modelInstance = OwnedModelDataSource.retrieveModel(modelPathTokensMap[modelPathToken] ?: "", resourceId)
 
-        if (account?.userId != userId) {
+        if (modelInstance == null || !modelInstance.isOwnedBy(userId)) {
             return this.respondWithNotFound(response)
         }
 
@@ -44,7 +47,14 @@ class AccountOwnershipFilter : OncePerRequestFilter() {
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        return !request.servletPath.matches(Regex("/api/users/[^/]+/accounts/[^/]+"))
+        for (key in modelPathTokensMap.keys) {
+            if (request.servletPath.matches(Regex("/api/users/[^/]+/$key/[^/]+"))) {
+                modelPathToken = key
+
+                return false
+            }
+        }
+        return true
     }
 
     private fun respondWithNotFound(response: HttpServletResponse) {

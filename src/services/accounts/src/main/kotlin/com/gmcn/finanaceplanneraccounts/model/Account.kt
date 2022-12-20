@@ -15,17 +15,12 @@ data class Account(
     @JsonIgnore
     var userId: String,
     var balance: Float = Random.nextInt(0, 100).toFloat()
-) {
+) : OwnedModel(userId) {
     @Id
     @GeneratedValue
     lateinit var id: String
 
     private var internalReference: String = UUID.randomUUID().toString()
-
-    @JsonIgnore
-    fun getInternalReference(): String {
-        return internalReference
-    }
 
     @JsonProperty
     fun setInternalReference(value: String?) {
