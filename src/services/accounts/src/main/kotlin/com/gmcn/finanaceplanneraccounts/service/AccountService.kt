@@ -15,13 +15,7 @@ class AccountService(
 ) {
 
     fun getUserAccount(id: String): Account {
-        val account = findUserAccount(id) ?: throw ResourceNotFoundApiException()
-
-        if (!isOwnedByUser(account)) {
-            throw ResourceNotFoundApiException()
-        }
-
-        return account
+        return accountDataSource.findByIdOrNull(id) ?: throw ResourceNotFoundApiException()
     }
 
     fun getAllUserAccounts(id: String): List<Account> {
@@ -46,16 +40,6 @@ class AccountService(
     }
 
     fun deleteAccount(accountId: String) {
-        findUserAccount(accountId);
-
         accountDataSource.deleteById(accountId)
-    }
-
-    private fun findUserAccount(id: String): Account? {
-        return accountDataSource.findByIdOrNull(id)
-    }
-
-    private fun isOwnedByUser(account: Account): Boolean {
-        return (account.userId == applicationStatus.authorizedUserId)
     }
 }
