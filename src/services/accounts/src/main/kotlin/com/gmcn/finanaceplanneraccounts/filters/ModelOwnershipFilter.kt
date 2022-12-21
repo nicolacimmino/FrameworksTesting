@@ -18,7 +18,7 @@ class ModelOwnershipFilter : OncePerRequestFilter() {
     private lateinit var objectMapper: ObjectMapper
 
     private var modelPathTokensMap = mapOf(
-        "accounts" to OwnedModelDAO.TYPE_ACCOUNT
+        "accounts" to OwnedModelDAO.OwnedModelTypes.ACCOUNT
     )
 
     private lateinit var modelPathToken: String
@@ -37,7 +37,10 @@ class ModelOwnershipFilter : OncePerRequestFilter() {
         val userId = result?.groupValues?.get(1) ?: ""
         val resourceId = result?.groupValues?.get(2) ?: ""
 
-        val modelInstance = OwnedModelDAO.findOrNull(modelPathTokensMap[modelPathToken] ?: "", resourceId)
+        val modelInstance = OwnedModelDAO.findOrNull(
+            modelPathTokensMap[modelPathToken] ?: throw Exception("Unsupported owned resource $modelPathToken"),
+            resourceId
+        )
 
         if (modelInstance == null || !modelInstance.isOwnedBy(userId)) {
             return this.respondWithNotFound(response)

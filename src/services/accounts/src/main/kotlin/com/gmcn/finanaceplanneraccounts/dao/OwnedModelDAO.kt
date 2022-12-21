@@ -7,18 +7,17 @@ import org.springframework.stereotype.Component
 
 @Component
 object OwnedModelDAO {
-    const val TYPE_ACCOUNT = "account"
+    enum class OwnedModelTypes {
+        ACCOUNT
+    }
 
     lateinit var accountsRepository: AccountMongoRepository
         @Autowired
         set
 
-    fun findOrNull(model: String, id: String): OwnedModel? {
-        return when (model) {
-            TYPE_ACCOUNT -> accountsRepository.findByIdOrNull(id)
-            else -> {
-                throw Exception("Invalid owned model $model")
-            }
+    fun findOrNull(modelType: OwnedModelTypes, id: String): OwnedModel? {
+        return when (modelType) {
+            OwnedModelTypes.ACCOUNT -> accountsRepository.findByIdOrNull(id)
         }
     }
 }

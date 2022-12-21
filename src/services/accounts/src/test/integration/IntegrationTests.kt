@@ -51,10 +51,16 @@ abstract class IntegrationTests {
 
     @AfterAll
     fun cleanup() {
-        val testUserId = userDAO.findByEmailOrNull(TEST_USER_A_EMAIL)?.id
+        val testUserAId = userDAO.findByEmailOrNull(TEST_USER_A_EMAIL)?.id
 
-        if (testUserId != null) {
-            userDAO.delete(testUserId)
+        if (testUserAId != null) {
+            userDAO.delete(testUserAId)
+        }
+
+        val testUserBId = userDAO.findByEmailOrNull(TEST_USER_B_EMAIL)?.id
+
+        if (testUserBId != null) {
+            userDAO.delete(testUserBId)
         }
     }
 
