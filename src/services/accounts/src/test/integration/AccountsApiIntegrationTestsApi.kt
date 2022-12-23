@@ -124,7 +124,7 @@ class AccountsApiIntegrationTestsApi() : IntegrationTests(
             CreateAccountDTO(TEST_USER_A_ACCOUNT_ADDITIONAL_NAME, TEST_USER_A_ACCOUNT_ADDITIONAL_CURRENCY)
 
         val entity = template.exchange(
-            "/api/users/${getTestAUserId()}/accounts/",
+            "/api/users/${getTestAUserId()}/accounts",
             HttpMethod.POST,
             HttpEntity<CreateAccountDTO>(createAccountDto, getUserAuthenticationHeders()),
             CreateAccountResponseDTO::class.java

@@ -2,10 +2,12 @@ package com.gmcn.finanaceplanneraccounts.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+//import javax.persistence.GeneratedValue
+//import javax.persistence.Id
 
 @Document(collection = "accounts")
 data class Account(

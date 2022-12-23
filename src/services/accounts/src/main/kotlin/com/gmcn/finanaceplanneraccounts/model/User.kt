@@ -1,12 +1,15 @@
 package com.gmcn.finanaceplanneraccounts.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.Column
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import javax.persistence.Column
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+//import javax.persistence.Column
+//import javax.persistence.GeneratedValue
+//import javax.persistence.Id
 
 @Document(collection = "users")
 class User {

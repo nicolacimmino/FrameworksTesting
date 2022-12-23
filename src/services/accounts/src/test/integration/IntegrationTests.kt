@@ -112,7 +112,7 @@ abstract class IntegrationTests {
             @Throws(IOException::class)
             override fun hasError(response: ClientHttpResponse): Boolean {
                 val statusCode = response.statusCode
-                return statusCode.series() == HttpStatus.Series.SERVER_ERROR
+                return statusCode.is5xxServerError
             }
         }
     }
