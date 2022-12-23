@@ -1,0 +1,38 @@
+package datasource
+
+import com.gmcn.tokens.dao.AccountMongoRepository
+import com.gmcn.tokens.model.Account
+import kotlin.random.Random
+
+val AccountMongoRepository.Companion.userAccounts by lazy { mutableMapOf<String, MutableMap<String, Account>>() }
+
+fun AccountMongoRepository.Companion.getTestAccountsForUser(
+    userId: String,
+    count: Int = 1
+): MutableMap<String, Account> {
+    if (userAccounts.containsKey(userId)) {
+        return userAccounts[userId]!!
+    }
+
+    val currencies = listOf("EUR", "GBP", "USD")
+    val accounts = mutableMapOf<String, Account>()
+
+    for (ix in 0 until count) {
+        val account = Account("Test $count", currencies[Random.nextInt(currencies.size)], userId, 100.0f)
+        account.id = account.name.hashCode().toString()
+
+        accounts[account.id] = account
+    }
+
+    userAccounts[userId] = accounts
+
+    return accounts
+}
+
+fun AccountMongoRepository.Companion.getTestAccount(userId: String, accountId: String): Account? {
+    if (userAccounts.containsKey(userId) && userAccounts[userId]!!.containsKey(accountId)) {
+        return userAccounts[userId]!![accountId]
+    }
+
+    return null
+}

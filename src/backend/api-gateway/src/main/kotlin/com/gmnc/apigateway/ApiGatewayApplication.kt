@@ -19,7 +19,13 @@ class ApiGatewayApplication {
     fun customRouteLocator(builder: RouteLocatorBuilder): RouteLocator? {
         return builder.routes()
             .route(
-                "path_route"
+                "tokens"
+            ) { r: PredicateSpec ->
+                r.path("/api/tokens")
+                    .uri(eurekaClient?.getNextServerFromEureka("TOKENS-SERVICE", false)?.homePageUrl)
+            }
+            .route(
+                "api"
             ) { r: PredicateSpec ->
                 r.path("/api/**")
                     .uri(eurekaClient?.getNextServerFromEureka("ACCOUNTS-SERVICE", false)?.homePageUrl)
