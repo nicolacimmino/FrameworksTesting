@@ -1,5 +1,7 @@
 package com.gmnc.apigateway
 
+import com.netflix.discovery.EurekaClient
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.cloud.gateway.route.RouteLocator
@@ -10,6 +12,9 @@ import org.springframework.context.annotation.Bean
 
 @SpringBootApplication
 class ApiGatewayApplication {
+    @Autowired
+    val eurekaClient: EurekaClient? = null
+
     @Bean
     fun customRouteLocator(builder: RouteLocatorBuilder): RouteLocator? {
         return builder.routes()
@@ -17,7 +22,7 @@ class ApiGatewayApplication {
                 "path_route"
             ) { r: PredicateSpec ->
                 r.path("/api/**")
-                    .uri("http://127.0.0.1:8080")
+                    .uri(eurekaClient?.getNextServerFromEureka("ACCOUNTS-SERVICE", false)?.homePageUrl)
             }
             .build()
     }

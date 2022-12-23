@@ -10,8 +10,6 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication(exclude = [DataSourceAutoConfiguration::class, SecurityAutoConfiguration::class])
 class FinancePlannerAccountsApplication {
-//    @Autowired
-//    private val eurekaClient: EurekaClient? = null
 }
 
 fun main(args: Array<String>) {
