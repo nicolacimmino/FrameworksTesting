@@ -1,5 +1,6 @@
 package com.gmcn.tokens.controllers
 
+import com.gmcn.tokens.ConfigProperties
 import com.gmcn.tokens.dao.UserDAO
 import com.gmcn.tokens.dtos.CreateUserDTO
 import com.gmcn.tokens.dtos.NewUserCredentialsDTO
@@ -27,6 +28,9 @@ class UsersController(
     @Autowired
     private val rabbitTemplate: RabbitTemplate? = null
 
+    @Autowired
+    private lateinit var configProperties: ConfigProperties
+
     @PostMapping("users")
     fun register(@RequestBody createUserRequest: CreateUserDTO): User {
 
@@ -44,9 +48,8 @@ class UsersController(
         rabbitTemplate?.messageConverter = Jackson2JsonMessageConverter()
 
         rabbitTemplate?.convertAndSend(
-            "spring-boot-exchange", "foo.bar.baz", NewUserCredentialsDTO(
-                createUserRequest.name,
-                createUserRequest.password
+            configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, NewUserCredentialsDTO(
+                createUserRequest.name, createUserRequest.password
             )
         );
 

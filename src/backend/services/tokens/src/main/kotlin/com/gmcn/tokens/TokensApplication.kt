@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.amqp.support.converter.MessageConverter
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
@@ -18,23 +19,22 @@ import org.springframework.context.annotation.Bean
 
 @SpringBootApplication(exclude = [DataSourceAutoConfiguration::class, SecurityAutoConfiguration::class])
 class TokensApplication {
-    val topicExchangeName = "spring-boot-exchange"
-
-    val queueName = "spring-boot"
+    @Autowired
+    lateinit var configProperties: ConfigProperties
 
     @Bean
     fun queue(): Queue? {
-        return Queue(queueName, false)
+        return Queue(configProperties.serviceQueueName, false)
     }
 
     @Bean
     fun exchange(): TopicExchange? {
-        return TopicExchange(topicExchangeName)
+        return TopicExchange(configProperties.topicExchangeName)
     }
 
     @Bean
     fun binding(queue: Queue?, exchange: TopicExchange?): Binding? {
-        return BindingBuilder.bind(queue).to(exchange).with("foo.bar.#")
+        return BindingBuilder.bind(queue).to(exchange).with(configProperties.userEventsRoutingKey)
     }
 
     @Bean
@@ -50,7 +50,7 @@ class TokensApplication {
     ): SimpleMessageListenerContainer? {
         val container = SimpleMessageListenerContainer()
         container.connectionFactory = connectionFactory!!
-        container.setQueueNames(queueName)
+        container.setQueueNames(configProperties.serviceQueueName)
         container.setMessageListener(messageListenerAdapter)
         messageListenerAdapter.setMessageConverter(Jackson2JsonMessageConverter())
 

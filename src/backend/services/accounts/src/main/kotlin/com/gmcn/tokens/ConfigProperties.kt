@@ -13,6 +13,12 @@ import javax.crypto.spec.SecretKeySpec
 class ConfigProperties {
     var jwtkey: String? = null
 
+    lateinit var topicExchangeName: String
+
+    lateinit var tokensServiceQueueName: String
+
+    lateinit var userCreatedEventsRoutingKey: String
+
     fun getTokenKey(): Key {
         return SecretKeySpec(
             Decoders.BASE64.decode(jwtkey ?: ""),
