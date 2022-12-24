@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
         <module name="accounts-service" />
+        <module name="config-server" />
         <module name="tokens-service" />
         <module name="eureka-server" />
       </profile>
@@ -15,6 +16,7 @@
     <bytecodeTargetLevel>
       <module name="accounts-service" target="17" />
       <module name="api-gateway" target="17" />
+      <module name="config-server" target="17" />
       <module name="eureka-server" target="17" />
       <module name="finanaceplanner-accounts" target="17" />
       <module name="tokens-service" target="17" />
@@ -24,6 +26,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="accounts-service" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
+      <module name="config-server" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="finanaceplanner-accounts" options="-parameters" />
       <module name="tokens-service" options="-parameters" />
