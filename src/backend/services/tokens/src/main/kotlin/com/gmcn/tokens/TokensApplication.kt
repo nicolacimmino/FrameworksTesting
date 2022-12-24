@@ -58,7 +58,7 @@ class TokensApplication {
     }
 
     @Bean
-    fun listenerAdapter(receiver: MessageReceiver?): MessageListenerAdapter? {
+    fun listenerAdapter(receiver: NewUserCredentialsReceiver?): MessageListenerAdapter? {
         return MessageListenerAdapter(receiver, "receiveMessage")
     }
 

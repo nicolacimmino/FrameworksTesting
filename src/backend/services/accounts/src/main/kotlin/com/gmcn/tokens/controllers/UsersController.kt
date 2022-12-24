@@ -40,20 +40,22 @@ class UsersController(
             throw InputInvalidApiException("duplicate email")
         }
 
-        val user = User()
+        var user = User()
         user.name = createUserRequest.name
         user.email = createUserRequest.email
         user.password = createUserRequest.password
+
+        user = userDAO.save(user)
 
         rabbitTemplate?.messageConverter = Jackson2JsonMessageConverter()
 
         rabbitTemplate?.convertAndSend(
             configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, NewUserCredentialsDTO(
-                createUserRequest.name, createUserRequest.password
+                user.id, createUserRequest.email, createUserRequest.password
             )
         );
 
-        return userDAO.save(user)
+        return user
     }
 
     @GetMapping("users/{user_id}")

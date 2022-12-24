@@ -1,6 +1,7 @@
 package com.gmcn.tokens.controllers
 
-import com.gmcn.tokens.dao.UserDAO
+import com.gmcn.tokens.ConfigProperties
+import com.gmcn.tokens.dao.UserCredentialsDAO
 import com.gmcn.tokens.dtos.CreateTokenDTO
 import com.gmcn.tokens.dtos.CreateTokenResponseDTO
 import com.gmcn.tokens.errors.UnauthorizedApiException
@@ -15,10 +16,10 @@ import java.util.*
 
 @RestController
 @RequestMapping("api/tokens")
-class TokensController(private val userDAO: UserDAO) {
+class TokensController(private val userDAO: UserCredentialsDAO) {
 
     @Autowired
-    lateinit var configProperties: com.gmcn.tokens.ConfigProperties
+    lateinit var configProperties: ConfigProperties
 
     @PostMapping
     fun login(@RequestBody createTokenRequest: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
@@ -32,11 +33,11 @@ class TokensController(private val userDAO: UserDAO) {
 
         val jwt = Jwts.builder()
             .setIssuer("example.com")
-            .setSubject(user.id)
+            .setSubject(user.userId)
             .setExpiration(Date(System.currentTimeMillis() + 1000 * ttlSeconds))
             .signWith(configProperties.getTokenKey())
             .compact()
 
-        return ResponseEntity.ok(CreateTokenResponseDTO(jwt, ttlSeconds, user.id))
+        return ResponseEntity.ok(CreateTokenResponseDTO(jwt, ttlSeconds, user.userId))
     }
 }
