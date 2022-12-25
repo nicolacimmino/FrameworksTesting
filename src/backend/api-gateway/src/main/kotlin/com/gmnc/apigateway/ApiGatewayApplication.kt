@@ -27,14 +27,19 @@ class ApiGatewayApplication {
             .route(
                 "api"
             ) { r: PredicateSpec ->
-                r.path("/api/users/{user_id}/{resource_type}",
-                    "/api/users/{user_id}/{resource_type}/{resource_id}")
+                r.path(
+                    "/api/users/{user_id}/{resource_type}",
+                    "/api/users/{user_id}/{resource_type}/{resource_id}"
+                )
                     .uri(eurekaClient?.getNextServerFromEureka("USER-ASSETS-SERVICE", false)?.homePageUrl)
             }
             .route(
                 "api"
             ) { r: PredicateSpec ->
-                r.path("/api/users/{user_id}")
+                r.path(
+                    "/api/users/{user_id}",
+                    "/api/users"
+                )
                     .uri(eurekaClient?.getNextServerFromEureka("USERS-SERVICE", false)?.homePageUrl)
             }
             .build()
