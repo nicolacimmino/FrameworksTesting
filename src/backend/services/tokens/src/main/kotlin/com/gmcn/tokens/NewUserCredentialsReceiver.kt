@@ -7,9 +7,11 @@ import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.TopicExchange
+import org.springframework.amqp.rabbit.annotation.RabbitHandler
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
+import org.springframework.amqp.support.converter.ClassMapper
 import org.springframework.amqp.support.converter.DefaultClassMapper
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.amqp.support.converter.MessageConverter
@@ -41,12 +43,17 @@ class NewUserCredentialsReceiver {
     }
 
     @Bean
-    fun messageConverter(): MessageConverter {
-
-        val converter = Jackson2JsonMessageConverter()
+    fun classMapper(): ClassMapper {
         val classMapper = DefaultClassMapper()
         classMapper.setTrustedPackages("com.gmnc.isc")
-        classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
+        //classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
+        return classMapper
+
+    }
+
+    @Bean
+    fun messageConverter(classMapper: ClassMapper): MessageConverter {
+        val converter = Jackson2JsonMessageConverter()
         converter.setClassMapper(classMapper)
 
         return converter
@@ -69,10 +76,11 @@ class NewUserCredentialsReceiver {
 
     @Bean
     fun listenerAdapter(receiver: NewUserCredentialsReceiver?): MessageListenerAdapter? {
-        return MessageListenerAdapter(receiver, "receiveMessage")
+        return MessageListenerAdapter(receiver)
     }
 
-    fun receiveMessage(newUserCredentialsDto: NewUserCredentialsDTO) {
+    @RabbitHandler
+    fun handleMessage(newUserCredentialsDto: NewUserCredentialsDTO) {
         println("Received <$newUserCredentialsDto>")
 
         var userCredentials = UserCredentials()

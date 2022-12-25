@@ -55,7 +55,7 @@ class UsersController(
         var converter = Jackson2JsonMessageConverter()
         var classMapper = DefaultClassMapper()
         classMapper.setTrustedPackages("com.gmcn.isc")
-        classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
+        //classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
         converter.setClassMapper(classMapper)
 
         rabbitTemplate?.messageConverter = converter
