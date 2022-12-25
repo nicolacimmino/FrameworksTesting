@@ -10,6 +10,7 @@ import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.model.User
 import com.gmcn.users.service.UserService
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.support.converter.DefaultClassMapper
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -47,7 +48,16 @@ class UsersController(
 
         user = userDAO.save(user)
 
-        rabbitTemplate?.messageConverter = Jackson2JsonMessageConverter()
+        // NewUserCredentialsDTO exist in different packages in the sender and receiver,
+        //  we need to provide an ID for the type and the receiver will use that to resolve its DTO
+        // TODO: Consider, DTOs to communicate between services could be a in common library.
+        var converter = Jackson2JsonMessageConverter()
+        var classMapper = DefaultClassMapper()
+        classMapper.setTrustedPackages("*")
+        classMapper.setIdClassMapping(mapOf("NewUserCredentialsDTO" to NewUserCredentialsDTO::class.java))
+        converter.setClassMapper(classMapper)
+
+        rabbitTemplate?.messageConverter = converter
 
         rabbitTemplate?.convertAndSend(
             configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, NewUserCredentialsDTO(

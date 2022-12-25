@@ -10,6 +10,7 @@ import org.springframework.amqp.core.TopicExchange
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
+import org.springframework.amqp.support.converter.DefaultClassMapper
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,22 +40,28 @@ class NewUserCredentialsReceiver {
         return BindingBuilder.bind(queue).to(exchange).with(configProperties.userEventsRoutingKey)
     }
 
-    @Bean
+
     fun messageConverter(): MessageConverter? {
-        return Jackson2JsonMessageConverter()
+
+        val converter = Jackson2JsonMessageConverter()
+        val classMapper = DefaultClassMapper()
+        classMapper.setTrustedPackages("*")
+        classMapper.setIdClassMapping(mapOf("NewUserCredentialsDTO" to NewUserCredentialsDTO::class.java))
+        converter.setClassMapper(classMapper)
+
+        return converter
     }
 
     @Bean
     fun container(
         connectionFactory: ConnectionFactory?,
-        messageListenerAdapter: MessageListenerAdapter,
-        messageConverter: MessageConverter
+        messageListenerAdapter: MessageListenerAdapter
     ): SimpleMessageListenerContainer? {
         val container = SimpleMessageListenerContainer()
         container.connectionFactory = connectionFactory!!
         container.setQueueNames(configProperties.serviceQueueName)
         container.setMessageListener(messageListenerAdapter)
-        messageListenerAdapter.setMessageConverter(Jackson2JsonMessageConverter())
+        messageListenerAdapter.setMessageConverter(messageConverter())
 
         return container
     }
