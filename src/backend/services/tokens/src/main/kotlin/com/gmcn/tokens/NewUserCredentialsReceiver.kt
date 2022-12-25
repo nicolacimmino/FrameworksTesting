@@ -1,7 +1,7 @@
 package com.gmcn.tokens
 
 import com.gmcn.tokens.dao.UserCredentialsDAO
-import com.gmcn.tokens.dtos.NewUserCredentialsDTO
+import com.gmcn.users.dtos.NewUserCredentialsDTO
 import com.gmcn.tokens.model.UserCredentials
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
