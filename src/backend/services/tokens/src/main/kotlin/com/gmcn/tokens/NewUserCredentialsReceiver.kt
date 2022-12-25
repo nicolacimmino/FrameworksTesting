@@ -2,7 +2,7 @@ package com.gmcn.tokens
 
 import com.gmcn.tokens.dao.UserCredentialsDAO
 import com.gmcn.tokens.model.UserCredentials
-import com.gmcn.users.dtos.NewUserCredentialsDTO
+import com.gmnc.isc.NewUserCredentialsDTO
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -40,13 +40,13 @@ class NewUserCredentialsReceiver {
         return BindingBuilder.bind(queue).to(exchange).with(configProperties.userEventsRoutingKey)
     }
 
-
-    fun messageConverter(): MessageConverter? {
+    @Bean
+    fun messageConverter(): MessageConverter {
 
         val converter = Jackson2JsonMessageConverter()
         val classMapper = DefaultClassMapper()
-        classMapper.setTrustedPackages("*")
-        classMapper.setIdClassMapping(mapOf("NewUserCredentialsDTO" to NewUserCredentialsDTO::class.java))
+        classMapper.setTrustedPackages("com.gmnc.isc")
+        classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
         converter.setClassMapper(classMapper)
 
         return converter
@@ -55,13 +55,14 @@ class NewUserCredentialsReceiver {
     @Bean
     fun container(
         connectionFactory: ConnectionFactory?,
-        messageListenerAdapter: MessageListenerAdapter
+        messageListenerAdapter: MessageListenerAdapter,
+        messageConverter: MessageConverter
     ): SimpleMessageListenerContainer? {
         val container = SimpleMessageListenerContainer()
         container.connectionFactory = connectionFactory!!
         container.setQueueNames(configProperties.serviceQueueName)
         container.setMessageListener(messageListenerAdapter)
-        messageListenerAdapter.setMessageConverter(messageConverter())
+        messageListenerAdapter.setMessageConverter(messageConverter)
 
         return container
     }

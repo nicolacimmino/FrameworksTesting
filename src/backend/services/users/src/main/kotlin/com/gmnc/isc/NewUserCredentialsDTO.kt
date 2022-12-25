@@ -1,5 +1,4 @@
-// TODO: FIX! THis should be in the tokens.dtos package. See NewUserCredentialsReceiver for issues with class mapping
-package com.gmcn.users.dtos
+package com.gmnc.isc
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

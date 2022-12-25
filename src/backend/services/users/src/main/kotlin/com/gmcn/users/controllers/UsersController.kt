@@ -4,11 +4,11 @@ import com.gmcn.users.ApplicationStatus
 import com.gmcn.users.ConfigProperties
 import com.gmcn.users.dao.UserDAO
 import com.gmcn.users.dtos.CreateUserDTO
-import com.gmcn.users.dtos.NewUserCredentialsDTO
 import com.gmcn.users.errors.InputInvalidApiException
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.model.User
 import com.gmcn.users.service.UserService
+import com.gmnc.isc.NewUserCredentialsDTO
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.support.converter.DefaultClassMapper
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
@@ -50,11 +50,12 @@ class UsersController(
 
         // NewUserCredentialsDTO exist in different packages in the sender and receiver,
         //  we need to provide an ID for the type and the receiver will use that to resolve its DTO
-        // TODO: Consider, DTOs to communicate between services could be a in common library.
+        // TODO: Consider, DTOs to communicate between services could be a in common library, they are already in
+        //  the same namespace.
         var converter = Jackson2JsonMessageConverter()
         var classMapper = DefaultClassMapper()
-        classMapper.setTrustedPackages("*")
-        classMapper.setIdClassMapping(mapOf("NewUserCredentialsDTO" to NewUserCredentialsDTO::class.java))
+        classMapper.setTrustedPackages("com.gmcn.isc")
+        classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
         converter.setClassMapper(classMapper)
 
         rabbitTemplate?.messageConverter = converter
