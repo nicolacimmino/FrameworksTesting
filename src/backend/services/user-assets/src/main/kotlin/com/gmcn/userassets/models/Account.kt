@@ -1,4 +1,4 @@
-package com.gmcn.userassets.model
+package com.gmcn.userassets.models
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty

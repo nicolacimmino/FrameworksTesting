@@ -1,10 +1,10 @@
-package com.gmcn.userassets.service
+package com.gmcn.userassets.services
 
 import com.gmcn.userassets.ApplicationStatus
-import com.gmcn.userassets.dao.AccountDAO
+import com.gmcn.userassets.daos.AccountDAO
 import com.gmcn.userassets.errors.InputInvalidApiException
 import com.gmcn.userassets.errors.ResourceNotFoundApiException
-import com.gmcn.userassets.model.Account
+import com.gmcn.userassets.models.Account
 import org.springframework.stereotype.Service
 
 @Service

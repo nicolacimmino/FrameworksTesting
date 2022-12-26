@@ -1,6 +1,6 @@
-package com.gmcn.userassets.dao
+package com.gmcn.userassets.daos
 
-import com.gmcn.userassets.model.Account
+import com.gmcn.userassets.models.Account
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 

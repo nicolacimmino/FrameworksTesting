@@ -1,7 +1,7 @@
 package com.gmcn.userassets.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gmcn.userassets.dao.OwnedModelDAO
+import com.gmcn.userassets.daos.OwnedModelDAO
 import com.gmcn.userassets.errors.ResourceNotFoundApiException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

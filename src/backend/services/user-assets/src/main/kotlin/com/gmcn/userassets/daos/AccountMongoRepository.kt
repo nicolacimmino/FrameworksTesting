@@ -1,6 +1,6 @@
-package com.gmcn.userassets.dao
+package com.gmcn.userassets.daos
 
-import com.gmcn.userassets.model.Account
+import com.gmcn.userassets.models.Account
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface AccountMongoRepository : MongoRepository<Account, String> {

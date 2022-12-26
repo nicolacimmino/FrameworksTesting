@@ -4,7 +4,7 @@ import com.gmcn.userassets.ApplicationStatus
 import com.gmcn.userassets.dtos.CreateAccountDTO
 import com.gmcn.userassets.dtos.CreateAccountResponseDTO
 import com.gmcn.userassets.dtos.GetAccountResponseDTO
-import com.gmcn.userassets.service.AccountService
+import com.gmcn.userassets.services.AccountService
 import org.springframework.web.bind.annotation.*
 
 @RestController

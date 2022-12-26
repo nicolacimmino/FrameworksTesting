@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gmcn.userassets.ApplicationStatus
 import com.gmcn.userassets.ConfigProperties
 import com.gmcn.userassets.errors.UnauthorizedApiException
+import com.gmcn.userassets.remoteservices.TokensService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import jakarta.servlet.FilterChain
@@ -27,6 +28,9 @@ class AuthenticationFilter : OncePerRequestFilter() {
     @Autowired
     lateinit var configProperties: ConfigProperties
 
+    @Autowired
+    private lateinit var tokensService: TokensService
+
     @Override
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -39,31 +43,29 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
         val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION) ?: ""
 
-        val jwt = authorizationHeader
-            .substringAfter("Bearer ")
-            .substringAfter("bearer ")
+        val jwt = authorizationHeader.substringAfter("Bearer ").substringAfter("bearer ")
 
-        try {
-            val jwtBody = validateJwt(jwt)
+        val authResponse = tokensService.validateToken(jwt) ?: return respondWithUnauthorized(response)
 
-            val results = "/api/users/([^/]*).*".toRegex()
-                .find(request.servletPath)?.destructured?.toList()
-                ?: return respondWithUnauthorized(response)
-
-            if (results.isEmpty()) {
-                return respondWithUnauthorized(response)
-            }
-
-            val userId = results.first()
-
-            if (jwtBody.subject != userId) {
-                return respondWithUnauthorized(response)
-            }
-
-            applicationStatus.authorizedUserId = jwtBody.subject
-        } catch (e: Exception) {
+        if (!authResponse.valid) {
             return respondWithUnauthorized(response)
         }
+
+        val results = "/api/users/([^/]*).*".toRegex()
+            .find(request.servletPath)?.destructured?.toList()
+            ?: return respondWithUnauthorized(response)
+
+        if (results.isEmpty()) {
+            return respondWithUnauthorized(response)
+        }
+
+        val userId = results.first()
+
+        if (authResponse.subject != userId) {
+            return respondWithUnauthorized(response)
+        }
+
+        applicationStatus.authorizedUserId = authResponse.subject
 
         filterChain.doFilter(request, response)
     }

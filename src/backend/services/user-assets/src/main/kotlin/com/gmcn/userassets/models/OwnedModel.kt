@@ -1,4 +1,4 @@
-package com.gmcn.userassets.model
+package com.gmcn.userassets.models
 
 abstract class OwnedModel(
     var owner: String,
