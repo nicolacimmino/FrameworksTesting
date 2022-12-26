@@ -3,6 +3,7 @@ package com.gmcn.users.isc
 import com.gmcn.users.ConfigProperties
 import com.gmnc.isc.NewUserCredentialsDTO
 import com.gmnc.isc.ValidateTokenDTO
+import com.gmnc.isc.ValidateTokenResponseDTO
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.support.converter.ClassMapper
 import org.springframework.amqp.support.converter.DefaultClassMapper
@@ -29,7 +30,7 @@ class InterServiceMessagesSender {
 
     fun classMapper(): ClassMapper {
         val classMapper = DefaultClassMapper()
-        classMapper.setTrustedPackages("com.gmcn.isc")
+        classMapper.setTrustedPackages("*")
         return classMapper
     }
 
@@ -47,12 +48,12 @@ class InterServiceMessagesSender {
         );
     }
 
-    fun validateToken(token: String): String? {
+    fun validateToken(token: String): ValidateTokenResponseDTO? {
 
         return rabbitTemplate().convertSendAndReceive(
             configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, ValidateTokenDTO(
                 token
             )
-        ) as? String
+        ) as? ValidateTokenResponseDTO
     }
 }

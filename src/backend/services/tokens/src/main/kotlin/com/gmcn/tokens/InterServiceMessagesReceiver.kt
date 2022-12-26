@@ -4,6 +4,7 @@ import com.gmcn.tokens.dao.UserCredentialsDAO
 import com.gmcn.tokens.model.UserCredentials
 import com.gmnc.isc.NewUserCredentialsDTO
 import com.gmnc.isc.ValidateTokenDTO
+import com.gmnc.isc.ValidateTokenResponseDTO
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.amqp.core.Binding
@@ -102,15 +103,19 @@ class InterServiceMessagesReceiver {
     }
 
     @RabbitHandler
-    fun handleMessage(validateTokenDTO: ValidateTokenDTO): String {
+    fun handleMessage(validateTokenDTO: ValidateTokenDTO): ValidateTokenResponseDTO {
         println("Received <$validateTokenDTO>")
 
         try {
             val jwtBody = validateJwt(validateTokenDTO.token)
 
-            return jwtBody.subject
+            return ValidateTokenResponseDTO(
+                jwtBody.subject, true
+            )
         } catch (e: Exception) {
-            return ""
+            return ValidateTokenResponseDTO(
+                "", false
+            )
         }
     }
 }

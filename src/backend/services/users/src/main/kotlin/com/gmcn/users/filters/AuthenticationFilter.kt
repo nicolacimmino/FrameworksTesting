@@ -2,11 +2,8 @@ package com.gmcn.users.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gmcn.users.ApplicationStatus
-import com.gmcn.users.ConfigProperties
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.isc.InterServiceMessagesSender
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -26,9 +23,6 @@ class AuthenticationFilter : OncePerRequestFilter() {
     lateinit var applicationStatus: ApplicationStatus
 
     @Autowired
-    lateinit var configProperties: ConfigProperties
-
-    @Autowired
     lateinit var interServiceMessagesSender: InterServiceMessagesSender
 
     @Override
@@ -43,7 +37,11 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
         val jwt = authorizationHeader.substringAfter("Bearer ").substringAfter("bearer ")
 
-        val authUserId = interServiceMessagesSender.validateToken(jwt) ?: return respondWithUnauthorized(response)
+        val authResponse = interServiceMessagesSender.validateToken(jwt) ?: return respondWithUnauthorized(response)
+
+        if (!authResponse.valid) {
+            return respondWithUnauthorized(response)
+        }
 
         val results = "/api/users/([^/]*).*".toRegex()
             .find(request.servletPath)?.destructured?.toList()
@@ -55,21 +53,17 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
         val userId = results.first()
 
-        if (authUserId != userId) {
+        if (authResponse.subject != userId) {
             return respondWithUnauthorized(response)
         }
 
-        applicationStatus.authorizedUserId = authUserId
+        applicationStatus.authorizedUserId = authResponse.subject
 
         filterChain.doFilter(request, response)
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         return !request.servletPath.startsWith("/api/users/")
-    }
-
-    private fun validateJwt(jwt: String): Claims {
-        return Jwts.parserBuilder().setSigningKey(configProperties.getTokenKey()).build().parseClaimsJws(jwt).body
     }
 
     private fun respondWithUnauthorized(response: HttpServletResponse) {
