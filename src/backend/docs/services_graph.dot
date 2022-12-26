@@ -1,0 +1,18 @@
+
+digraph architecture {
+  rankdir=LR;
+
+
+  subgraph api_gateways {
+      api_gateway -> { tokens, users, user_assets, discovery_service };
+  }
+
+  subgraph microservices {
+      tokens -> database;
+      users -> database;
+      user_assets -> database;
+      users -> tokens [color="purple"]
+      user_assets -> tokens [color="purple"]
+
+  }
+}
