@@ -26,6 +26,9 @@ class TokensService() {
     @Autowired
     private lateinit var userCredentialsDAO: UserCredentialsDAO
 
+    @Autowired
+    private lateinit var userCredentialsService: UserCredentialsService
+
     fun createToken(
         email: String, password: String
     ): String {
@@ -33,12 +36,14 @@ class TokensService() {
         val userCredentials =
             userCredentialsDAO.findByEmailOrNull(email) ?: throw UnauthorizedApiException("user/password invalid")
 
-        if (!userCredentials.isPasswordValid(password)) {
+        if (!userCredentialsService.isPasswordValid(userCredentials, password)) {
             throw UnauthorizedApiException("user/password invalid")
         }
 
-        return Jwts.builder().setIssuer("example.com").setSubject(userCredentials.userId)
-            .setExpiration(Date(System.currentTimeMillis() + 1000 * jwtTtlSeconds.toInt())).signWith(getTokenKey())
+        return Jwts.builder().setIssuer("example.com")
+            .setSubject(userCredentials.userId)
+            .setExpiration(Date(System.currentTimeMillis() + 1000 * jwtTtlSeconds.toInt()))
+            .signWith(getTokenKey())
             .compact()
     }
 

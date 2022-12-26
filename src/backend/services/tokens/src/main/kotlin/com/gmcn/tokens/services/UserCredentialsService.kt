@@ -3,6 +3,7 @@ package com.gmcn.tokens.services
 import com.gmcn.tokens.daos.UserCredentialsDAO
 import com.gmcn.tokens.models.UserCredentials
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,5 +18,9 @@ class UserCredentialsService() {
         userCredentials.password = password
 
         userCredentialsDAO.save(userCredentials)
+    }
+
+    fun isPasswordValid(userCredentials: UserCredentials, passwordToValidate: String): Boolean {
+        return BCryptPasswordEncoder().matches(passwordToValidate, userCredentials.password)
     }
 }

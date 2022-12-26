@@ -17,8 +17,4 @@ class UserCredentials {
         set(value) {
             field = BCryptPasswordEncoder().encode(value)
         }
-
-    fun isPasswordValid(passwordToValidate: String): Boolean {
-        return BCryptPasswordEncoder().matches(passwordToValidate, password)
-    }
 }
