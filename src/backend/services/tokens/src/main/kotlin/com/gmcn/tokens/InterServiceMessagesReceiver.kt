@@ -3,6 +3,9 @@ package com.gmcn.tokens
 import com.gmcn.tokens.dao.UserCredentialsDAO
 import com.gmcn.tokens.model.UserCredentials
 import com.gmnc.isc.NewUserCredentialsDTO
+import com.gmnc.isc.ValidateTokenDTO
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.Jwts
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -20,7 +23,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 @Component
-class NewUserCredentialsReceiver {
+class InterServiceMessagesReceiver {
     @Autowired
     lateinit var userCredentialsDao: UserCredentialsDAO
 
@@ -75,7 +78,7 @@ class NewUserCredentialsReceiver {
     }
 
     @Bean
-    fun listenerAdapter(receiver: NewUserCredentialsReceiver?): MessageListenerAdapter? {
+    fun listenerAdapter(receiver: InterServiceMessagesReceiver?): MessageListenerAdapter? {
         return MessageListenerAdapter(receiver)
     }
 
@@ -89,5 +92,25 @@ class NewUserCredentialsReceiver {
         userCredentials.password = newUserCredentialsDto.password
 
         this.userCredentialsDao.save(userCredentials)
+    }
+
+    private fun validateJwt(jwt: String): Claims {
+        return Jwts.parserBuilder()
+            .setSigningKey(configProperties.getTokenKey())
+            .build()
+            .parseClaimsJws(jwt).body
+    }
+
+    @RabbitHandler
+    fun handleMessage(validateTokenDTO: ValidateTokenDTO): String {
+        println("Received <$validateTokenDTO>")
+
+        try {
+            val jwtBody = validateJwt(validateTokenDTO.token)
+
+            return jwtBody.subject
+        } catch (e: Exception) {
+            return ""
+        }
     }
 }

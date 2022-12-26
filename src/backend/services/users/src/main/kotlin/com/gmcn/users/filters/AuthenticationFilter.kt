@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gmcn.users.ApplicationStatus
 import com.gmcn.users.ConfigProperties
 import com.gmcn.users.errors.UnauthorizedApiException
+import com.gmcn.users.isc.InterServiceMessagesSender
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import jakarta.servlet.FilterChain
@@ -27,6 +28,9 @@ class AuthenticationFilter : OncePerRequestFilter() {
     @Autowired
     lateinit var configProperties: ConfigProperties
 
+    @Autowired
+    lateinit var interServiceMessagesSender: InterServiceMessagesSender
+
     @Override
     override fun doFilterInternal(
         request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
@@ -39,26 +43,23 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
         val jwt = authorizationHeader.substringAfter("Bearer ").substringAfter("bearer ")
 
-        try {
-            val jwtBody = validateJwt(jwt)
+        val authUserId = interServiceMessagesSender.validateToken(jwt) ?: return respondWithUnauthorized(response)
 
-            val results = "/api/users/([^/]*).*".toRegex().find(request.servletPath)?.destructured?.toList()
-                ?: return respondWithUnauthorized(response)
+        val results = "/api/users/([^/]*).*".toRegex()
+            .find(request.servletPath)?.destructured?.toList()
+            ?: return respondWithUnauthorized(response)
 
-            if (results.isEmpty()) {
-                return respondWithUnauthorized(response)
-            }
-
-            val userId = results.first()
-
-            if (jwtBody.subject != userId) {
-                return respondWithUnauthorized(response)
-            }
-
-            applicationStatus.authorizedUserId = jwtBody.subject
-        } catch (e: Exception) {
+        if (results.isEmpty()) {
             return respondWithUnauthorized(response)
         }
+
+        val userId = results.first()
+
+        if (authUserId != userId) {
+            return respondWithUnauthorized(response)
+        }
+
+        applicationStatus.authorizedUserId = authUserId
 
         filterChain.doFilter(request, response)
     }
