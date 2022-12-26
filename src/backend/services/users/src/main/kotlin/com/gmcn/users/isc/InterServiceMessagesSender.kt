@@ -49,7 +49,6 @@ class InterServiceMessagesSender {
     }
 
     fun validateToken(token: String): ValidateTokenResponseDTO? {
-
         return rabbitTemplate().convertSendAndReceive(
             configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, ValidateTokenDTO(
                 token
