@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TokensController() {
+class TokensController {
     @Autowired
     lateinit var tokensService: TokensService
 
@@ -25,11 +25,11 @@ class TokensController() {
 
     @PostMapping("api/tokens")
     fun create(@RequestBody createTokenRequest: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
-        val user = userCredentialsDao.findByEmailOrNull(createTokenRequest.email)
+        val userCredentials = userCredentialsDao.findByEmailOrNull(createTokenRequest.email)
             ?: throw UnauthorizedApiException("user/password invalid")
 
         val token = tokensService.createToken(createTokenRequest.email, createTokenRequest.password)
 
-        return ResponseEntity.ok(CreateTokenResponseDTO(token, jwtTtlSeconds.toInt(), user.userId))
+        return ResponseEntity.ok(CreateTokenResponseDTO(token, jwtTtlSeconds.toInt(), userCredentials.userId))
     }
 }

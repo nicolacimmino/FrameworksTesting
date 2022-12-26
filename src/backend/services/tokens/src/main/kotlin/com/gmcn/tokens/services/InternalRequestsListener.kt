@@ -1,11 +1,8 @@
-package com.gmcn.tokens
+package com.gmcn.tokens.services
 
-import com.gmcn.tokens.daos.UserCredentialsDAO
 import com.gmcn.tokens.dtos.NewUserCredentialsDTO
 import com.gmcn.tokens.dtos.ValidateTokenDTO
 import com.gmcn.tokens.dtos.ValidateTokenResponseDTO
-import com.gmcn.tokens.models.UserCredentials
-import com.gmcn.tokens.services.TokensService
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -23,10 +20,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 @Component
-class TokensServiceInternalListener {
-    @Autowired
-    lateinit var userCredentialsDao: UserCredentialsDAO
-
+class InternalRequestsListener {
     @Bean
     fun queue(): Queue? {
         return Queue("financeplanner-tokens-service", false)
@@ -79,20 +73,19 @@ class TokensServiceInternalListener {
     }
 
     @Bean
-    fun listenerAdapter(receiver: TokensServiceInternalListener?): MessageListenerAdapter? {
+    fun listenerAdapter(receiver: InternalRequestsListener?): MessageListenerAdapter? {
         return MessageListenerAdapter(receiver)
     }
 
+    @Autowired
+    private lateinit var userCredentialsService: UserCredentialsService
+
     @RabbitHandler
     fun handleMessage(newUserCredentialsDto: NewUserCredentialsDTO) {
-        println("Received <$newUserCredentialsDto>")
-// TODO: this goes to the service layer, this is equivalent to a controller
-        var userCredentials = UserCredentials()
-        userCredentials.userId = newUserCredentialsDto.userId
-        userCredentials.email = newUserCredentialsDto.email
-        userCredentials.password = newUserCredentialsDto.password
-
-        this.userCredentialsDao.save(userCredentials)
+        userCredentialsService.updateUserCredentials(
+            newUserCredentialsDto.userId,
+            newUserCredentialsDto.email, newUserCredentialsDto.password
+        )
     }
 
     @Autowired
@@ -100,8 +93,6 @@ class TokensServiceInternalListener {
 
     @RabbitHandler
     fun handleMessage(validateTokenDTO: ValidateTokenDTO): ValidateTokenResponseDTO {
-        println("Received <$validateTokenDTO>")
-
         val subject = tokensService.validateToken(validateTokenDTO.token)
 
         return ValidateTokenResponseDTO(
