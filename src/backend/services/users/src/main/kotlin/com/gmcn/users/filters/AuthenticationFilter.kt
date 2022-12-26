@@ -3,7 +3,7 @@ package com.gmcn.users.filters
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gmcn.users.ApplicationStatus
 import com.gmcn.users.errors.UnauthorizedApiException
-import com.gmcn.users.isc.InterServiceMessagesSender
+import com.gmcn.users.remoteservices.TokensService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -23,7 +23,7 @@ class AuthenticationFilter : OncePerRequestFilter() {
     lateinit var applicationStatus: ApplicationStatus
 
     @Autowired
-    lateinit var interServiceMessagesSender: InterServiceMessagesSender
+    lateinit var interServiceMessagesSender: TokensService
 
     @Override
     override fun doFilterInternal(

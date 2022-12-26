@@ -1,4 +1,4 @@
-package com.gmnc.isc
+package com.gmcn.tokens.dtos
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

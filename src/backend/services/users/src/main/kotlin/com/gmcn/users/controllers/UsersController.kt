@@ -7,7 +7,7 @@ import com.gmcn.users.errors.InputInvalidApiException
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.model.User
 import com.gmcn.users.service.UserService
-import com.gmcn.users.isc.InterServiceMessagesSender
+import com.gmcn.users.remoteservices.TokensService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -24,7 +24,7 @@ class UsersController(
     lateinit var userService: UserService
 
     @Autowired
-    lateinit var interServiceMessagesSender: InterServiceMessagesSender
+    lateinit var interServiceMessagesSender: TokensService
 
     @PostMapping("users")
     fun register(@RequestBody createUserRequest: CreateUserDTO): User {

@@ -1,19 +1,19 @@
-package com.gmcn.users.isc
+package com.gmcn.users.remoteservices
 
 import com.gmcn.users.ConfigProperties
-import com.gmnc.isc.NewUserCredentialsDTO
-import com.gmnc.isc.ValidateTokenDTO
-import com.gmnc.isc.ValidateTokenResponseDTO
+import com.gmcn.users.dtos.NewUserCredentialsDTO
+import com.gmcn.users.dtos.ValidateTokenDTO
+import com.gmcn.users.dtos.ValidateTokenResponseDTO
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.support.converter.ClassMapper
-import org.springframework.amqp.support.converter.DefaultClassMapper
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class InterServiceMessagesSender {
+class TokensService {
     @Autowired
     private lateinit var configProperties: ConfigProperties
 
@@ -29,8 +29,13 @@ class InterServiceMessagesSender {
     }
 
     fun classMapper(): ClassMapper {
-        val classMapper = DefaultClassMapper()
+        val classMapper = DefaultJackson2JavaTypeMapper()
         classMapper.setTrustedPackages("*")
+        classMapper.idClassMapping = mapOf(
+            "tokens.validate_token" to ValidateTokenDTO::class.java,
+            "tokens.validate_token_response" to ValidateTokenResponseDTO::class.java,
+            "tokens.new_user_credentials" to NewUserCredentialsDTO::class.java,
+        )
         return classMapper
     }
 

@@ -1,10 +1,10 @@
 package com.gmcn.tokens
 
 import com.gmcn.tokens.dao.UserCredentialsDAO
+import com.gmcn.tokens.dtos.NewUserCredentialsDTO
+import com.gmcn.tokens.dtos.ValidateTokenDTO
+import com.gmcn.tokens.dtos.ValidateTokenResponseDTO
 import com.gmcn.tokens.model.UserCredentials
-import com.gmnc.isc.NewUserCredentialsDTO
-import com.gmnc.isc.ValidateTokenDTO
-import com.gmnc.isc.ValidateTokenResponseDTO
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.amqp.core.Binding
@@ -16,7 +16,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.amqp.support.converter.ClassMapper
-import org.springframework.amqp.support.converter.DefaultClassMapper
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 @Component
-class InterServiceMessagesReceiver {
+class TokensServiceInternalListener {
     @Autowired
     lateinit var userCredentialsDao: UserCredentialsDAO
 
@@ -48,9 +48,13 @@ class InterServiceMessagesReceiver {
 
     @Bean
     fun classMapper(): ClassMapper {
-        val classMapper = DefaultClassMapper()
+        val classMapper = DefaultJackson2JavaTypeMapper()
         classMapper.setTrustedPackages("com.gmnc.isc")
-        //classMapper.setIdClassMapping(mapOf("new-user-credentials" to NewUserCredentialsDTO::class.java))
+        classMapper.idClassMapping = mapOf(
+            "tokens.validate_token" to ValidateTokenDTO::class.java,
+            "tokens.validate_token_response" to ValidateTokenResponseDTO::class.java,
+            "tokens.new_user_credentials" to NewUserCredentialsDTO::class.java,
+        )
         return classMapper
 
     }
@@ -79,14 +83,14 @@ class InterServiceMessagesReceiver {
     }
 
     @Bean
-    fun listenerAdapter(receiver: InterServiceMessagesReceiver?): MessageListenerAdapter? {
+    fun listenerAdapter(receiver: TokensServiceInternalListener?): MessageListenerAdapter? {
         return MessageListenerAdapter(receiver)
     }
 
     @RabbitHandler
     fun handleMessage(newUserCredentialsDto: NewUserCredentialsDTO) {
         println("Received <$newUserCredentialsDto>")
-
+// TODO: this goes to the service layer, this is equivalent to a controller
         var userCredentials = UserCredentials()
         userCredentials.userId = newUserCredentialsDto.userId
         userCredentials.email = newUserCredentialsDto.email
@@ -105,7 +109,7 @@ class InterServiceMessagesReceiver {
     @RabbitHandler
     fun handleMessage(validateTokenDTO: ValidateTokenDTO): ValidateTokenResponseDTO {
         println("Received <$validateTokenDTO>")
-
+        // TODO: this goes to the service layer, this is equivalent to a controller
         try {
             val jwtBody = validateJwt(validateTokenDTO.token)
 
