@@ -1,8 +1,8 @@
-package com.gmcn.users.service
+package com.gmcn.users.services
 
-import com.gmcn.users.dao.UserDAO
+import com.gmcn.users.daos.UserDAO
 import com.gmcn.users.errors.ResourceNotFoundApiException
-import com.gmcn.users.model.User
+import com.gmcn.users.models.User
 import org.springframework.stereotype.Service
 
 @Service

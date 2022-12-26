@@ -1,4 +1,4 @@
-package com.gmcn.users.model
+package com.gmcn.users.models
 
 import jakarta.persistence.Column
 import jakarta.persistence.GeneratedValue

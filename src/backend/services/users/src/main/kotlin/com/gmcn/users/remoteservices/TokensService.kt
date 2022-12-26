@@ -1,6 +1,5 @@
 package com.gmcn.users.remoteservices
 
-import com.gmcn.users.ConfigProperties
 import com.gmcn.users.dtos.NewUserCredentialsDTO
 import com.gmcn.users.dtos.ValidateTokenDTO
 import com.gmcn.users.dtos.ValidateTokenResponseDTO
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class TokensService {
-    @Autowired
-    private lateinit var configProperties: ConfigProperties
 
     @Autowired
     lateinit var template: RabbitTemplate
@@ -47,7 +44,7 @@ class TokensService {
 
     fun notifyNewUserCredentials(userId: String, email: String, password: String) {
         rabbitTemplate().convertAndSend(
-            configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, NewUserCredentialsDTO(
+            "financeplanner-topic-exchange", "tokens.service", NewUserCredentialsDTO(
                 userId, email, password
             )
         );
@@ -55,7 +52,7 @@ class TokensService {
 
     fun validateToken(token: String): ValidateTokenResponseDTO? {
         return rabbitTemplate().convertSendAndReceive(
-            configProperties.topicExchangeName, configProperties.userCreatedEventsRoutingKey, ValidateTokenDTO(
+            "financeplanner-topic-exchange", "tokens.service", ValidateTokenDTO(
                 token
             )
         ) as? ValidateTokenResponseDTO

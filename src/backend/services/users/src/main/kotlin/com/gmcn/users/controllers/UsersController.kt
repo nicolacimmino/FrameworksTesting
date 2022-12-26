@@ -1,12 +1,12 @@
 package com.gmcn.users.controllers
 
 import com.gmcn.users.ApplicationStatus
-import com.gmcn.users.dao.UserDAO
+import com.gmcn.users.daos.UserDAO
 import com.gmcn.users.dtos.CreateUserDTO
 import com.gmcn.users.errors.InputInvalidApiException
 import com.gmcn.users.errors.UnauthorizedApiException
-import com.gmcn.users.model.User
-import com.gmcn.users.service.UserService
+import com.gmcn.users.models.User
+import com.gmcn.users.services.UserService
 import com.gmcn.users.remoteservices.TokensService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*

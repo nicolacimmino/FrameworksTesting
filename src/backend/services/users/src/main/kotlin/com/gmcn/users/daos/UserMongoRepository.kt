@@ -1,6 +1,6 @@
-package com.gmcn.users.dao
+package com.gmcn.users.daos
 
-import com.gmcn.users.model.User
+import com.gmcn.users.models.User
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface UserMongoRepository : MongoRepository<User, String> {

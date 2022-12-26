@@ -5,8 +5,7 @@ import com.gmcn.tokens.dtos.NewUserCredentialsDTO
 import com.gmcn.tokens.dtos.ValidateTokenDTO
 import com.gmcn.tokens.dtos.ValidateTokenResponseDTO
 import com.gmcn.tokens.model.UserCredentials
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
+import com.gmcn.tokens.service.TokensService
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -28,28 +27,25 @@ class TokensServiceInternalListener {
     @Autowired
     lateinit var userCredentialsDao: UserCredentialsDAO
 
-    @Autowired
-    lateinit var configProperties: ConfigProperties
-
     @Bean
     fun queue(): Queue? {
-        return Queue(configProperties.serviceQueueName, false)
+        return Queue("financeplanner-tokens-service", false)
     }
 
     @Bean
     fun exchange(): TopicExchange? {
-        return TopicExchange(configProperties.topicExchangeName)
+        return TopicExchange("financeplanner-topic-exchange")
     }
 
     @Bean
     fun binding(queue: Queue?, exchange: TopicExchange?): Binding? {
-        return BindingBuilder.bind(queue).to(exchange).with(configProperties.userEventsRoutingKey)
+        return BindingBuilder.bind(queue).to(exchange).with("tokens.service")
     }
 
     @Bean
     fun classMapper(): ClassMapper {
         val classMapper = DefaultJackson2JavaTypeMapper()
-        classMapper.setTrustedPackages("com.gmnc.isc")
+        classMapper.setTrustedPackages("*")
         classMapper.idClassMapping = mapOf(
             "tokens.validate_token" to ValidateTokenDTO::class.java,
             "tokens.validate_token_response" to ValidateTokenResponseDTO::class.java,
@@ -75,7 +71,7 @@ class TokensServiceInternalListener {
     ): SimpleMessageListenerContainer? {
         val container = SimpleMessageListenerContainer()
         container.connectionFactory = connectionFactory!!
-        container.setQueueNames(configProperties.serviceQueueName)
+        container.setQueueNames("financeplanner-tokens-service")
         container.setMessageListener(messageListenerAdapter)
         messageListenerAdapter.setMessageConverter(messageConverter)
 
@@ -99,27 +95,17 @@ class TokensServiceInternalListener {
         this.userCredentialsDao.save(userCredentials)
     }
 
-    private fun validateJwt(jwt: String): Claims {
-        return Jwts.parserBuilder()
-            .setSigningKey(configProperties.getTokenKey())
-            .build()
-            .parseClaimsJws(jwt).body
-    }
+    @Autowired
+    private lateinit var tokensService: TokensService
 
     @RabbitHandler
     fun handleMessage(validateTokenDTO: ValidateTokenDTO): ValidateTokenResponseDTO {
         println("Received <$validateTokenDTO>")
-        // TODO: this goes to the service layer, this is equivalent to a controller
-        try {
-            val jwtBody = validateJwt(validateTokenDTO.token)
 
-            return ValidateTokenResponseDTO(
-                jwtBody.subject, true
-            )
-        } catch (e: Exception) {
-            return ValidateTokenResponseDTO(
-                "", false
-            )
-        }
+        val subject = tokensService.validateToken(validateTokenDTO.token)
+
+        return ValidateTokenResponseDTO(
+            subject ?: "", subject != null
+        )
     }
 }
