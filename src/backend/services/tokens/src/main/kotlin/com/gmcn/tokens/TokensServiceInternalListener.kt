@@ -1,11 +1,11 @@
 package com.gmcn.tokens
 
-import com.gmcn.tokens.dao.UserCredentialsDAO
+import com.gmcn.tokens.daos.UserCredentialsDAO
 import com.gmcn.tokens.dtos.NewUserCredentialsDTO
 import com.gmcn.tokens.dtos.ValidateTokenDTO
 import com.gmcn.tokens.dtos.ValidateTokenResponseDTO
-import com.gmcn.tokens.model.UserCredentials
-import com.gmcn.tokens.service.TokensService
+import com.gmcn.tokens.models.UserCredentials
+import com.gmcn.tokens.services.TokensService
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue

@@ -1,4 +1,4 @@
-package com.gmcn.tokens.model
+package com.gmcn.tokens.models
 
 import jakarta.persistence.Column
 import org.springframework.data.mongodb.core.mapping.Document

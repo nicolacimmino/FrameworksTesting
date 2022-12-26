@@ -1,6 +1,6 @@
-package com.gmcn.tokens.dao
+package com.gmcn.tokens.daos
 
-import com.gmcn.tokens.model.UserCredentials
+import com.gmcn.tokens.models.UserCredentials
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 

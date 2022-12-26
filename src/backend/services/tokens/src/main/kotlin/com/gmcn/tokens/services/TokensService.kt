@@ -1,6 +1,6 @@
-package com.gmcn.tokens.service
+package com.gmcn.tokens.services
 
-import com.gmcn.tokens.dao.UserCredentialsDAO
+import com.gmcn.tokens.daos.UserCredentialsDAO
 import com.gmcn.tokens.errors.UnauthorizedApiException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -17,8 +17,11 @@ import javax.crypto.spec.SecretKeySpec
 @Component
 @Configuration
 class TokensService() {
-    @Value("\${jwtkey}")
-    lateinit var jwtkey: String
+    @Value("\${jwt_key}")
+    lateinit var jwtKey: String
+
+    @Value("\${jwt_ttl_seconds}")
+    lateinit var jwtTtlSeconds: Number
 
     @Autowired
     private lateinit var userDAO: UserCredentialsDAO
@@ -26,7 +29,7 @@ class TokensService() {
     fun createToken(
         email: String, password: String
     ): String {
-        val ttlSeconds = 60 * 60 * 24
+
         val user = userDAO.findByEmailOrNull(email) ?: throw UnauthorizedApiException("user/password invalid")
 
         if (!user.isPasswordValid(password)) {
@@ -34,7 +37,8 @@ class TokensService() {
         }
 
         return Jwts.builder().setIssuer("example.com").setSubject(user.userId)
-            .setExpiration(Date(System.currentTimeMillis() + 1000 * ttlSeconds)).signWith(getTokenKey()).compact()
+            .setExpiration(Date(System.currentTimeMillis() + 1000 * jwtTtlSeconds.toInt())).signWith(getTokenKey())
+            .compact()
     }
 
     fun validateToken(token: String): String? {
@@ -56,7 +60,7 @@ class TokensService() {
 
     private fun getTokenKey(): Key {
         return SecretKeySpec(
-            Decoders.BASE64.decode(jwtkey ?: ""), SignatureAlgorithm.HS256.jcaName
+            Decoders.BASE64.decode(jwtKey ?: ""), SignatureAlgorithm.HS256.jcaName
         )
     }
 }
