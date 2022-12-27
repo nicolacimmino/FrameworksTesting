@@ -1,6 +1,7 @@
 package com.gmcn.tokens.services
 
 import com.gmcn.tokens.dtos.NewUserCredentialsDTO
+import com.gmcn.tokens.dtos.NewUserPasswordDTO
 import com.gmcn.tokens.dtos.ValidateTokenDTO
 import com.gmcn.tokens.dtos.ValidateTokenResponseDTO
 import org.springframework.amqp.core.Binding
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class InternalRequestsListener {
+    @Autowired
+    private lateinit var tokensService: TokensService
+
     @Bean
     fun queue(): Queue? {
         return Queue("financeplanner-tokens-service", false)
@@ -44,6 +48,7 @@ class InternalRequestsListener {
             "tokens.validate_token" to ValidateTokenDTO::class.java,
             "tokens.validate_token_response" to ValidateTokenResponseDTO::class.java,
             "tokens.new_user_credentials" to NewUserCredentialsDTO::class.java,
+            "tokens.new_user_password" to NewUserPasswordDTO::class.java
         )
         return classMapper
 
@@ -88,15 +93,20 @@ class InternalRequestsListener {
         )
     }
 
-    @Autowired
-    private lateinit var tokensService: TokensService
-
     @RabbitHandler
     fun handleMessage(validateTokenDTO: ValidateTokenDTO): ValidateTokenResponseDTO {
         val subject = tokensService.validateToken(validateTokenDTO.token)
 
         return ValidateTokenResponseDTO(
             subject ?: "", subject != null
+        )
+    }
+
+    @RabbitHandler
+    fun handleMessage(newUserPasswordDTO: NewUserPasswordDTO) {
+        userCredentialsService.updateUserPassword(
+            newUserPasswordDTO.userId,
+            newUserPasswordDTO.password
         )
     }
 }

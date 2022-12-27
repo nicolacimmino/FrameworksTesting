@@ -34,4 +34,12 @@ class UserService(
 
         return user
     }
+
+    fun updatePassword(
+        userId: String, password: String
+    ) {
+        tokensService.updateUserPassword(
+            userId, password
+        )
+    }
 }

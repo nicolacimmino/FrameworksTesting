@@ -1,6 +1,7 @@
 package com.gmcn.users.remoteservices
 
 import com.gmcn.users.dtos.NewUserCredentialsDTO
+import com.gmcn.users.dtos.NewUserPasswordDTO
 import com.gmcn.users.dtos.ValidateTokenDTO
 import com.gmcn.users.dtos.ValidateTokenResponseDTO
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -32,6 +33,7 @@ class TokensService {
             "tokens.validate_token" to ValidateTokenDTO::class.java,
             "tokens.validate_token_response" to ValidateTokenResponseDTO::class.java,
             "tokens.new_user_credentials" to NewUserCredentialsDTO::class.java,
+            "tokens.new_user_password" to NewUserPasswordDTO::class.java
         )
         return classMapper
     }
@@ -46,6 +48,14 @@ class TokensService {
         rabbitTemplate().convertAndSend(
             "financeplanner-topic-exchange", "tokens.service", NewUserCredentialsDTO(
                 userId, email, password
+            )
+        );
+    }
+
+    fun updateUserPassword(userId: String, password: String) {
+        rabbitTemplate().convertAndSend(
+            "financeplanner-topic-exchange", "tokens.service", NewUserPasswordDTO(
+                userId, password
             )
         );
     }
