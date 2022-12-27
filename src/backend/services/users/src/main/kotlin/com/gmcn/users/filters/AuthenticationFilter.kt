@@ -1,7 +1,6 @@
 package com.gmcn.users.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gmcn.users.ApplicationStatus
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.remoteservices.TokensService
 import jakarta.servlet.FilterChain
@@ -18,9 +17,6 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    lateinit var applicationStatus: ApplicationStatus
 
     @Autowired
     lateinit var interServiceMessagesSender: TokensService
@@ -57,7 +53,7 @@ class AuthenticationFilter : OncePerRequestFilter() {
             return respondWithUnauthorized(response)
         }
 
-        applicationStatus.authorizedUserId = authResponse.subject
+        request.setAttribute("auth.user_id", authResponse.subject)
 
         filterChain.doFilter(request, response)
     }

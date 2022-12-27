@@ -1,12 +1,8 @@
 package com.gmcn.userassets.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gmcn.userassets.ApplicationStatus
-import com.gmcn.userassets.ConfigProperties
 import com.gmcn.userassets.errors.UnauthorizedApiException
 import com.gmcn.userassets.remoteservices.TokensService
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -21,12 +17,6 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    lateinit var applicationStatus: ApplicationStatus
-
-    @Autowired
-    lateinit var configProperties: ConfigProperties
 
     @Autowired
     private lateinit var tokensService: TokensService
@@ -65,20 +55,13 @@ class AuthenticationFilter : OncePerRequestFilter() {
             return respondWithUnauthorized(response)
         }
 
-        applicationStatus.authorizedUserId = authResponse.subject
+        request.setAttribute("auth.user_id", authResponse.subject)
 
         filterChain.doFilter(request, response)
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         return !request.servletPath.startsWith("/api/users/")
-    }
-
-    private fun validateJwt(jwt: String): Claims {
-        return Jwts.parserBuilder()
-            .setSigningKey(configProperties.getTokenKey())
-            .build()
-            .parseClaimsJws(jwt).body
     }
 
     private fun respondWithUnauthorized(response: HttpServletResponse) {

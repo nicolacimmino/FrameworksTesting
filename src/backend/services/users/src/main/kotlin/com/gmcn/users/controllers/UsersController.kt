@@ -1,9 +1,9 @@
 package com.gmcn.users.controllers
 
-import com.gmcn.users.ApplicationStatus
 import com.gmcn.users.dtos.*
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.services.UserService
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api")
 class UsersController(
 ) {
-    @Autowired
-    lateinit var applicationStatus: ApplicationStatus
-
     @Autowired
     lateinit var userService: UserService
 
@@ -32,9 +29,10 @@ class UsersController(
 
     @GetMapping("users/{user_id}")
     fun getUser(
-        @PathVariable("user_id") userId: String?
+        request: HttpServletRequest,
+        @PathVariable("user_id") userId: String
     ): GetUserResponseDTO {
-        if (applicationStatus.authorizedUserId != userId) {
+        if (request.getAttribute("auth.user_id").toString() != userId) {
             throw UnauthorizedApiException()
         }
 
@@ -46,13 +44,16 @@ class UsersController(
     }
 
     @PatchMapping("users/{user_id}")
-    fun updatePassword(@RequestBody updatePasswordRequest: UpdateUserPasswordDTO): UpdateUserPasswordResponseDTO {
+    fun updatePassword(
+        request: HttpServletRequest,
+        @RequestBody updatePasswordRequest: UpdateUserPasswordDTO
+    ): UpdateUserPasswordResponseDTO {
         userService.updatePassword(
-            applicationStatus.authorizedUserId,
+            request.getAttribute("auth.user_id").toString(),
             updatePasswordRequest.password
         )
 
-        var user = userService.getUser(applicationStatus.authorizedUserId)
+        var user = userService.getUser(request.getAttribute("auth.user_id").toString())
 
         return UpdateUserPasswordResponseDTO(
             user.id, user.name, user.email
