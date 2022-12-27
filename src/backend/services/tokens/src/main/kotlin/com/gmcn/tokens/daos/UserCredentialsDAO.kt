@@ -19,4 +19,8 @@ class UserCredentialsDAO(
     fun save(userCredentials: UserCredentials): UserCredentials {
         return userCredentialsRepository.save(userCredentials)
     }
+
+    fun delete(userId: String) {
+        userCredentialsRepository.deleteById(userId)
+    }
 }

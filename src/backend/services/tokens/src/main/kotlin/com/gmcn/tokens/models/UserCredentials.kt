@@ -1,11 +1,11 @@
 package com.gmcn.tokens.models
 
-import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.data.annotation.Id as SpringId
 
 // Note: @Document is mongo specific as the JPA @Table annotation is not honoured by MongoRepository
 
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 @Document(collection = "user-credentials")
 class UserCredentials {
     @Id
-    @Column(name = "userId", nullable = false)
+    @SpringId
     var userId: String = ""
 
     var email: String = ""
