@@ -1,9 +1,7 @@
-package com.gmcn.users.remoteservices
+package com.gmcn.userassets.services.remote
 
-import com.gmcn.users.dtos.NewUserCredentialsDTO
-import com.gmcn.users.dtos.NewUserPasswordDTO
-import com.gmcn.users.dtos.ValidateTokenDTO
-import com.gmcn.users.dtos.ValidateTokenResponseDTO
+import com.gmcn.userassets.dtos.remote.tokens.ValidateTokenDTO
+import com.gmcn.userassets.dtos.remote.tokens.ValidateTokenResponseDTO
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.support.converter.ClassMapper
 import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper
@@ -32,8 +30,6 @@ class TokensService {
         classMapper.idClassMapping = mapOf(
             "tokens.validate_token" to ValidateTokenDTO::class.java,
             "tokens.validate_token_response" to ValidateTokenResponseDTO::class.java,
-            "tokens.new_user_credentials" to NewUserCredentialsDTO::class.java,
-            "tokens.new_user_password" to NewUserPasswordDTO::class.java
         )
         return classMapper
     }
@@ -42,22 +38,6 @@ class TokensService {
         template.messageConverter = converter()
 
         return template
-    }
-
-    fun notifyNewUserCredentials(userId: String, email: String, password: String) {
-        rabbitTemplate().convertAndSend(
-            "financeplanner-topic-exchange", "tokens.service", NewUserCredentialsDTO(
-                userId, email, password
-            )
-        );
-    }
-
-    fun updateUserPassword(userId: String, password: String) {
-        rabbitTemplate().convertAndSend(
-            "financeplanner-topic-exchange", "tokens.service", NewUserPasswordDTO(
-                userId, password
-            )
-        );
     }
 
     fun validateToken(token: String): ValidateTokenResponseDTO? {

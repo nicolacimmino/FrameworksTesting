@@ -1,4 +1,4 @@
-package com.gmcn.userassets.dtos
+package com.gmcn.users.dtos.remote.tokens
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

@@ -2,7 +2,7 @@ package com.gmcn.userassets.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gmcn.userassets.errors.UnauthorizedApiException
-import com.gmcn.userassets.remoteservices.TokensService
+import com.gmcn.userassets.services.remote.TokensService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

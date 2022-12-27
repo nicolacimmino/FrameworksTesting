@@ -4,7 +4,7 @@ import com.gmcn.users.daos.UserDAO
 import com.gmcn.users.errors.InputInvalidApiException
 import com.gmcn.users.errors.ResourceNotFoundApiException
 import com.gmcn.users.models.User
-import com.gmcn.users.remoteservices.TokensService
+import com.gmcn.users.services.remote.TokensService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

@@ -1,6 +1,7 @@
 package com.gmcn.users.controllers
 
 import com.gmcn.users.dtos.*
+import com.gmcn.users.dtos.UpdateUserPasswordDTO
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.services.UserService
 import jakarta.servlet.http.HttpServletRequest
