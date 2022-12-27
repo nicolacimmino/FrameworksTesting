@@ -31,7 +31,7 @@ class TokensService() {
 
     fun createToken(
         email: String, password: String
-    ): String {
+    ): Token {
 
         val userCredentials =
             userCredentialsDAO.findByEmailOrNull(email) ?: throw UnauthorizedApiException("user/password invalid")
@@ -40,11 +40,15 @@ class TokensService() {
             throw UnauthorizedApiException("user/password invalid")
         }
 
-        return Jwts.builder().setIssuer("example.com")
-            .setSubject(userCredentials.userId)
-            .setExpiration(Date(System.currentTimeMillis() + 1000 * jwtTtlSeconds.toInt()))
-            .signWith(getTokenKey())
-            .compact()
+        return Token(
+            Jwts.builder().setIssuer("example.com")
+                .setSubject(userCredentials.userId)
+                .setExpiration(Date(System.currentTimeMillis() + 1000 * jwtTtlSeconds.toInt()))
+                .signWith(getTokenKey())
+                .compact(),
+            userCredentials.userId,
+            jwtTtlSeconds.toInt()
+        )
     }
 
     fun validateToken(token: String): String? {
@@ -69,4 +73,12 @@ class TokensService() {
             Decoders.BASE64.decode(jwtKey ?: ""), SignatureAlgorithm.HS256.jcaName
         )
     }
+}
+
+data class Token(
+    val compacted: String,
+    val sub: String,
+    val ttlSeconds: Int
+) {
+
 }
