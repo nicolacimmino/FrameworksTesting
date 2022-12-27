@@ -4,7 +4,7 @@ digraph architecture {
 
 
   subgraph edge_services {
-      api_gateway -> { tokens, users, user_assets, discovery_service };
+      api_gateway -> { tokens, users, user_assets, service_registry };
   }
 
   subgraph microservices {
@@ -17,6 +17,6 @@ digraph architecture {
         user_assets -> { database, config_server };
         users -> tokens [color="purple"]
         user_assets -> tokens [color="purple"]
-        discovery_service -> { tokens, users, user_assets }
+        service_registry -> { tokens, users, user_assets }
   }
 }
