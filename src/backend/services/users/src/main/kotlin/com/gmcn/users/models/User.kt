@@ -7,15 +7,15 @@ import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "users")
-class User {
-    @Id
-    @GeneratedValue
-    lateinit var id: String
-
+class User(
     @Column
-    var name: String = ""
+    var name: String = "",
 
     @Column
     @Indexed(unique = true)
     var email: String = ""
+) {
+    @Id
+    @GeneratedValue
+    lateinit var id: String
 }

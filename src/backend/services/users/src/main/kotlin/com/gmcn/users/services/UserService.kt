@@ -20,24 +20,16 @@ class UserService(
     }
 
     fun createUser(
-        email: String,
-        name: String,
-        password: String
+        email: String, name: String, password: String
     ): User {
         if (userDAO.findByEmailOrNull(email) != null) {
             throw InputInvalidApiException("duplicate email")
         }
 
-        var user = User()
-        user.name = name
-        user.email = email
-
-        user = userDAO.save(user)
+        val user = userDAO.save(User(name, email))
 
         tokensService.notifyNewUserCredentials(
-            user.id,
-            email,
-            password
+            user.id, email, password
         )
 
         return user
