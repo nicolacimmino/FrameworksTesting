@@ -1,4 +1,7 @@
-The backend is built as a set of microservices in Spring Boot/Kotlin. The services are organized as depicted below:
+# Backend
+
+The backend is built as a set of microservices in Spring Boot/Kotlin, with a MongoDB instance for persistence and a
+RabbitMQ server for inter-service communication. The services are organized as depicted below:
 
 ![services](./src/backend/docs/services_graph.png)
 
@@ -65,7 +68,32 @@ The Users Assets Service ([src/backend/services/users](./src/backend/services/us
 API to create and manage user assets (e.g. Bank Accounts). Othen than for the resources exposed it's identical in 
 architecture to the Users Service.
 
+## Public API
 
+Create a user.
+```
+curl --location --request POST 'http://127.0.0.1:8090/api/users' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "nicolaA8",
+    "email": "nicolaA8@example.com",
+    "password": "test"
+}'
+
+201 CREATED
+{
+    "id": "63ac3329c399db522a13d52a",
+    "name": "nicolaA8",
+    "email": "nicolaA8@example.com"
+}
+```
+curl --location --request POST 'http://127.0.0.1:8090/api/tokens' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "nicolaA8@example.com",
+    "password": "test"
+}'
+```
 
 
 

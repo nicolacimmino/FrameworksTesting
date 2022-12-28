@@ -1,6 +1,10 @@
-package com.gmcn.users.errors
+package com.gmcn.userassets.services
 
-import com.gmcn.users.dtos.ApiErrorDTO
+import com.gmcn.userassets.dtos.ApiErrorDTO
+import com.gmcn.userassets.errors.InputInvalidApiException
+import com.gmcn.userassets.errors.InternalErrorApiException
+import com.gmcn.userassets.errors.ResourceNotFoundApiException
+import com.gmcn.userassets.errors.UnauthorizedApiException
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -11,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-class ApiErrorHandler {
+class ApiErrorHandlerService {
     @ResponseBody
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

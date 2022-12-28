@@ -1,11 +1,12 @@
 package com.gmcn.users.controllers
 
 import com.gmcn.users.dtos.*
-import com.gmcn.users.dtos.UpdateUserPasswordDTO
 import com.gmcn.users.errors.UnauthorizedApiException
 import com.gmcn.users.services.UserService
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 
@@ -17,21 +18,22 @@ class UsersController(
     lateinit var userService: UserService
 
     @PostMapping("users")
-    fun register(@RequestBody createUserRequest: CreateUserDTO): CreateUserResponseDTO {
+    fun register(@RequestBody createUserRequest: CreateUserDTO): ResponseEntity<CreateUserResponseDTO> {
 
         val user = userService.createUser(
             createUserRequest.email, createUserRequest.name, createUserRequest.password
         )
 
-        return CreateUserResponseDTO(
-            user.id, user.name, user.email
+        return ResponseEntity<CreateUserResponseDTO>(
+            CreateUserResponseDTO(
+                user.id, user.name, user.email
+            ), null, HttpServletResponse.SC_CREATED
         )
     }
 
     @GetMapping("users/{user_id}")
     fun getUser(
-        request: HttpServletRequest,
-        @PathVariable("user_id") userId: String
+        request: HttpServletRequest, @PathVariable("user_id") userId: String
     ): GetUserResponseDTO {
         if (request.getAttribute("auth.user_id").toString() != userId) {
             throw UnauthorizedApiException()

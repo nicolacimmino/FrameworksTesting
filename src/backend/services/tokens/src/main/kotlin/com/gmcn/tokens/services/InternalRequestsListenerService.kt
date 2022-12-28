@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 @Component
-class InternalRequestsListener {
+class InternalRequestsListenerService {
     @Autowired
     private lateinit var tokensService: TokensService
 
@@ -78,7 +78,7 @@ class InternalRequestsListener {
     }
 
     @Bean
-    fun listenerAdapter(receiver: InternalRequestsListener?): MessageListenerAdapter? {
+    fun listenerAdapter(receiver: InternalRequestsListenerService?): MessageListenerAdapter? {
         return MessageListenerAdapter(receiver)
     }
 
