@@ -87,13 +87,99 @@ curl --location --request POST 'http://127.0.0.1:8090/api/users' \
     "email": "nicolaA8@example.com"
 }
 ```
+
+Get a token for the user:
+```
 curl --location --request POST 'http://127.0.0.1:8090/api/tokens' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nicolaA8@example.com",
     "password": "test"
 }'
+
+200 OK
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU",
+    "ttl": 86400,
+    "user_id": "63ac3329c399db522a13d52a"
+}
 ```
 
+Get the user.
+```
+curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU'
 
+200 OK
+{
+    "id": "63ac3329c399db522a13d52a",
+    "name": "nicolaA8",
+    "email": "nicolaA8@example.com"
+}
+```
 
+Update user password.
+````
+curl --location --request PATCH 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "password": "test"
+}'
+
+200 OK
+{
+    "id": "63ab1093c399db522a13d527",
+    "name": "nicolaA5",
+    "email": "nicolaA5@example.com"
+}
+````
+
+Create a bank account.
+````
+curl --location --request POST 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts?Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "test 2",
+    "currency": "EUR"
+}'
+
+201 CREATED
+{
+    "name": "test 2",
+    "currency": "EUR",
+    "balance": 0.0,
+    "id": "63ac46d95701607d8c93283f"
+}
+````
+
+Get a Bank Account.
+````
+curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts/63ac46d95701607d8c93283f' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU'
+
+200 OK
+{
+    "name": "test 2",
+    "currency": "EUR",
+    "balance": 0.0,
+    "id": "63ac46d95701607d8c93283f"
+}
+````
+
+Get all Bank Accounts.
+````
+curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU'
+
+200 OK
+[
+    {
+        "name": "test 2",
+        "currency": "EUR",
+        "balance": 0.0,
+        "id": "63ac46d95701607d8c93283f"
+    }
+]
+````

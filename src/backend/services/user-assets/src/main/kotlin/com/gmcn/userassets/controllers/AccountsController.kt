@@ -5,6 +5,8 @@ import com.gmcn.userassets.dtos.CreateAccountResponseDTO
 import com.gmcn.userassets.dtos.GetAccountResponseDTO
 import com.gmcn.userassets.services.AccountService
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -34,14 +36,18 @@ class AccountsController(
     fun addAccount(
         request: HttpServletRequest,
         @RequestBody createAccountRequest: CreateAccountDTO
-    ): CreateAccountResponseDTO {
+    ): ResponseEntity<CreateAccountResponseDTO> {
         val account = accountService.addAccount(
             createAccountRequest.name,
             createAccountRequest.currency,
             request.getAttribute("auth.user_id").toString()
         )
 
-        return CreateAccountResponseDTO(account.name, account.currency, account.balance, account.id)
+        return ResponseEntity<CreateAccountResponseDTO>(
+            CreateAccountResponseDTO(account.name, account.currency, account.balance, account.id),
+            null,
+            HttpServletResponse.SC_CREATED
+        )
     }
 
     @DeleteMapping("users/*/accounts/{account_id}")
