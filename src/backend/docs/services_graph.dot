@@ -2,21 +2,32 @@
 digraph architecture {
   rankdir=LR;
 
-
   subgraph edge_services {
-      api_gateway -> { tokens, users, user_assets, service_registry };
+      api_gateway -> {
+        tokens
+        users
+        user_assets
+        service_registry
+      }
   }
 
-  subgraph microservices {
-      rank = same; tokens; users; user_assets;
-  }
+  subgraph public_services {
+      tokens -> {
+        database
+        config_server
+        service_registry
+      } [color=purple]
 
-  subgraph ancillary_services {
-        tokens -> { database, config_server };
-        users -> { database, config_server };
-        user_assets -> { database, config_server };
-        users -> tokens [color="purple"]
-        user_assets -> tokens [color="purple"]
-        service_registry -> { tokens, users, user_assets }
+      users -> {
+        database,
+        config_server,
+        service_registry
+      } [color=red]
+
+      user_assets -> {
+        database,
+        config_server,
+        service_registry
+      }  [color=green]
   }
 }
