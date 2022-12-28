@@ -72,7 +72,7 @@ architecture to the Users Service.
 
 Create a user.
 ```
-curl --location --request POST 'http://127.0.0.1:8090/api/users' \
+curl --request POST 'http://127.0.0.1:8090/api/users' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "name": "nicolaA8",
@@ -90,7 +90,7 @@ curl --location --request POST 'http://127.0.0.1:8090/api/users' \
 
 Get a token for the user:
 ```
-curl --location --request POST 'http://127.0.0.1:8090/api/tokens' \
+curl --request POST 'http://127.0.0.1:8090/api/tokens' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nicolaA8@example.com",
@@ -99,7 +99,7 @@ curl --location --request POST 'http://127.0.0.1:8090/api/tokens' \
 
 200 OK
 {
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU",
+    "token": "[token]",
     "ttl": 86400,
     "user_id": "63ac3329c399db522a13d52a"
 }
@@ -107,8 +107,8 @@ curl --location --request POST 'http://127.0.0.1:8090/api/tokens' \
 
 Get the user.
 ```
-curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU'
+curl --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a' \
+--header 'Authorization: Bearer [token]'
 
 200 OK
 {
@@ -120,8 +120,8 @@ curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522
 
 Update user password.
 ````
-curl --location --request PATCH 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU' \
+curl --request PATCH 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a' \
+--header 'Authorization: Bearer [token]' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "password": "test"
@@ -137,8 +137,8 @@ curl --location --request PATCH 'http://127.0.0.1:8090/api/users/63ac3329c399db5
 
 Create a bank account.
 ````
-curl --location --request POST 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts?Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU' \
+curl --request POST 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts?Authorization=Bearer [token]' \
+--header 'Authorization: Bearer [token]' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "name": "test 2",
@@ -156,8 +156,8 @@ curl --location --request POST 'http://127.0.0.1:8090/api/users/63ac3329c399db52
 
 Get a Bank Account.
 ````
-curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts/63ac46d95701607d8c93283f' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU'
+curl --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts/63ac46d95701607d8c93283f' \
+--header 'Authorization: Bearer [token]'
 
 200 OK
 {
@@ -170,8 +170,8 @@ curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522
 
 Get all Bank Accounts.
 ````
-curl --location --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmNvbSIsInN1YiI6IjYzYWMzMzI5YzM5OWRiNTIyYTEzZDUyYSIsImV4cCI6MTY3MjMyMDMyOH0.4RsCkNqjkpXChUN1gs01_npmRI59g7dDOa0yEjic0mU'
+curl --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/accounts' \
+--header 'Authorization: Bearer [token]'
 
 200 OK
 [
