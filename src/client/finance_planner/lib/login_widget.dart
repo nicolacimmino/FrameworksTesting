@@ -22,7 +22,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   _login() async {
-    widget.accountsApi.logout();
+    await widget.accountsApi.logout();
     await widget.onUserChange('');
     await widget.onUserChange(await widget.accountsApi
         .login(userEmailController.text, userPasswordController.text));
