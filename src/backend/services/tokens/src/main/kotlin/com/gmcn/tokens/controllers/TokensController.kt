@@ -5,16 +5,10 @@ import com.gmcn.tokens.dtos.CreateTokenResponseDTO
 import com.gmcn.tokens.services.TokensService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
-//@CrossOrigin(origins = ["http://localhost:50707/"])
-@CrossOrigin(origins = ["*"])
+@CrossOrigin(origins = ["http://localhost:8888/"])
 class TokensController {
     @Autowired
     lateinit var tokensService: TokensService

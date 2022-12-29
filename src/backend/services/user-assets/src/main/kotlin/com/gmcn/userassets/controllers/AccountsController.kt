@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api")
-//@CrossOrigin(origins = ["http://localhost:50707/"])
-@CrossOrigin(origins = ["*"])
+@CrossOrigin(origins = ["http://localhost:8888/"])
 class AccountsController(
     private val accountService: AccountService
 ) {
