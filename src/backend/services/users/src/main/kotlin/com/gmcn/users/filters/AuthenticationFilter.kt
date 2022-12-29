@@ -19,7 +19,7 @@ class AuthenticationFilter : OncePerRequestFilter() {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    lateinit var interServiceMessagesSender: TokensService
+    lateinit var tokensService: TokensService
 
     @Override
     override fun doFilterInternal(
@@ -33,7 +33,7 @@ class AuthenticationFilter : OncePerRequestFilter() {
 
         val jwt = authorizationHeader.substringAfter("Bearer ").substringAfter("bearer ")
 
-        val authResponse = interServiceMessagesSender.validateToken(jwt) ?: return respondWithUnauthorized(response)
+        val authResponse = tokensService.validateToken(jwt) ?: return respondWithUnauthorized(response)
 
         if (!authResponse.valid) {
             return respondWithUnauthorized(response)
