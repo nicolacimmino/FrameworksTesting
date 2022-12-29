@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'FinancePlannerApp.dart';
+import 'finance_planner_app.dart';
 
 void main() => runApp(const FinancePlannerApp());

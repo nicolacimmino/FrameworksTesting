@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Account.dart';
+import 'account.dart';
 
 class AccountWidget extends StatefulWidget {
   final Account account;
