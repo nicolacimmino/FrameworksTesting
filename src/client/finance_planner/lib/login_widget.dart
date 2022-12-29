@@ -24,8 +24,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   _login() async {
     widget.accountsApi.logout();
     await widget.onUserChange('');
-    await widget.onUserChange(await widget.accountsApi.login(
-        userEmailController.text, userPasswordController.text));
+    await widget.onUserChange(await widget.accountsApi
+        .login(userEmailController.text, userPasswordController.text));
   }
 
   @override

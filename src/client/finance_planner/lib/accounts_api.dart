@@ -11,7 +11,30 @@ class AccountsApi {
   String userId = '';
 
   bool isUserAuthenticated() {
-    return jwt != '' && userId !='';
+    return jwt != '' && userId != '';
+  }
+
+  Future<String> login(String email, String password) async {
+    var response = await http.post(
+      Uri.parse('http://localhost:8081/api/tokens'),
+      headers: {HttpHeaders.contentTypeHeader: "application/json"},
+      body: '{"email": "$email","password": "$password"}',
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      jwt = responseBody['token'];
+      userId = responseBody['user_id'];
+
+      return userId;
+    } else {
+      throw Exception('Failed to login');
+    }
+  }
+
+  void logout() {
+    jwt = '';
+    userId = '';
   }
 
   Future<List<Account>> fetchAccounts() async {
@@ -26,47 +49,6 @@ class AccountsApi {
       return Account.listFromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load accounts');
-    }
-  }
-
-  Future<Account> fetchAccount() async {
-    var response = await http.get(
-      Uri.parse(
-          'http://localhost:8080/api/users/$userId/accounts/633b0585f20dd943edde4b30'),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer $jwt',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return Account.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load account');
-    }
-  }
-
-  void logout() {
-    jwt = '';
-    userId = '';
-  }
-
-  Future<String> login(String email, String password) async {
-    var response = await http.post(
-      Uri.parse('http://localhost:8081/api/tokens'),
-      headers: {
-        HttpHeaders.contentTypeHeader: "application/json"
-      },
-      body: '{"email": "$email","password": "$password"}',
-    );
-
-    if (response.statusCode == 200) {
-      var responseBody = jsonDecode(response.body);
-      jwt = responseBody['token'];
-      userId = responseBody['user_id'];
-
-      return userId;
-    } else {
-      throw Exception('Failed to login');
     }
   }
 }

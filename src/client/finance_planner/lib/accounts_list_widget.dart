@@ -6,7 +6,6 @@ import 'accounts_api.dart';
 import 'login_widget.dart';
 
 class AccountsListWidget extends StatefulWidget {
-  //final String userId;
   final AccountsApi accountsApi;
 
   const AccountsListWidget({super.key, required this.accountsApi});
@@ -19,16 +18,7 @@ class _AccountsListWidgetState extends State<AccountsListWidget> {
   late Future<List<Account>> futureAccounts;
   String userId = '';
 
-  @override
-  void initState() {
-    super.initState();
-    print('accounts list widget init state');
-    //if (widget.userId != '') {
-      //futureAccounts = widget.accountsApi.fetchAccounts();
-    //}
-  }
-
-  void _onUserChange(String newUserId){
+  void _onUserChange(String newUserId) {
     setState(() {
       futureAccounts = widget.accountsApi.fetchAccounts();
       userId = newUserId;
