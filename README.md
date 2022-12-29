@@ -183,3 +183,20 @@ curl --request GET 'http://127.0.0.1:8090/api/users/63ac3329c399db522a13d52a/acc
     }
 ]
 ````
+
+# Frontend
+
+POC Flutter Application consuming the API.
+
+It provides a login screen:
+
+![login](./src/client/docs/login.png)
+
+This will invoke the Tokens api and store locally the obtained JWT token and the user ID needed for following API calls.
+
+It then provides an overview of all the user Bank Accounts:
+
+![accounts](./src/client/docs/accounts.png)
+
+which are obtained from the Accounts api.
+
