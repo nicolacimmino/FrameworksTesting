@@ -2,6 +2,19 @@
 digraph architecture {
   rankdir=LR;
 
+  node[fillcolor="#FFEB3B" style="filled" fontcolor="black"];
+    api_gateway[label="API Gateway"];
+
+  node[fillcolor="#C8E6C9" style="filled" fontcolor="black"];
+    tokens[label="Tokens Service"];
+    users[label="Users Service"];
+    user_assets[label="User Assets Service"];
+
+  node[fillcolor="#CFD8DC" style="filled" fontcolor="black"];
+    database[label="MongoDB"];
+    config_server[label="Config Server"];
+    service_registry[label="Service Registry"];
+
   subgraph edge_services {
       api_gateway -> {
         tokens
