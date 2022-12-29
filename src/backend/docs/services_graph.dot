@@ -29,18 +29,18 @@ digraph architecture {
         database
         config_server
         service_registry
-      } [color=purple]
+      } [color="#fcad03"]
 
       users -> {
         database,
         config_server,
         service_registry
-      } [color=red]
+      } [color="#03fc8c"]
 
       user_assets -> {
         database,
         config_server,
         service_registry
-      }  [color=green]
+      }  [color="#03adfc"]
   }
 }
