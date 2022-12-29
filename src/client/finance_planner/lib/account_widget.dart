@@ -39,7 +39,14 @@ class _AccountWidgetState extends State<AccountWidget> {
                     style: const TextStyle(color: Colors.white)),
               ],
             ),
-            Text('${widget.account.balance} ${widget.account.currency}'),
+            Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                    '${widget.account.balance} ${widget.account.currency}',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold))),
           ],
         ));
   }

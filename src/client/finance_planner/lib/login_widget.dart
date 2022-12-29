@@ -31,21 +31,27 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      TextField(
-        controller: userEmailController,
-        decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'User Name',
-            hintText: 'Enter your email'),
-      ),
-      TextField(
-        controller: userPasswordController,
-        obscureText: true,
-        decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Password',
-            hintText: 'Enter your password'),
-      ),
+      Padding(
+          padding: const EdgeInsets.all(10),
+          child: TextField(
+            controller: userEmailController,
+            autofillHints: const [AutofillHints.username],
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'User Name',
+                hintText: 'Enter your email'),
+          )),
+      Padding(
+          padding: const EdgeInsets.all(10),
+          child: TextField(
+            controller: userPasswordController,
+            obscureText: true,
+            autofillHints: const [AutofillHints.password],
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Password',
+                hintText: 'Enter your password'),
+          )),
       Container(
         height: 50,
         width: 250,

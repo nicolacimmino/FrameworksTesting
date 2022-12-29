@@ -19,15 +19,16 @@ class _AccountsListWidgetState extends State<AccountsListWidget> {
   String userId = '';
 
   void _onUserChange(String newUserId) {
-    setState(() {
-      futureAccounts = widget.accountsApi.fetchAccounts();
-      userId = newUserId;
-    });
+    if(newUserId != '') {
+      setState(() {
+        futureAccounts = widget.accountsApi.fetchAccounts();
+        userId = newUserId;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('accounts list widget build');
     if (userId != '') {
       return FutureBuilder<List<Account>>(
           future: futureAccounts,

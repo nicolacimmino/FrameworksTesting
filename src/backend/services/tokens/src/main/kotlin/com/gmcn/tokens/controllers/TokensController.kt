@@ -4,10 +4,12 @@ import com.gmcn.tokens.dtos.CreateTokenDTO
 import com.gmcn.tokens.dtos.CreateTokenResponseDTO
 import com.gmcn.tokens.services.TokensService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -18,9 +20,10 @@ class TokensController {
     lateinit var tokensService: TokensService
 
     @PostMapping("api/tokens")
-    fun create(@RequestBody createTokenRequest: CreateTokenDTO): ResponseEntity<CreateTokenResponseDTO> {
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@RequestBody createTokenRequest: CreateTokenDTO): CreateTokenResponseDTO {
         val (token, sub, ttlSeconds) = tokensService.createToken(createTokenRequest.email, createTokenRequest.password)
 
-        return ResponseEntity.ok(CreateTokenResponseDTO(token, ttlSeconds, sub))
+        return CreateTokenResponseDTO(token, ttlSeconds, sub)
     }
 }

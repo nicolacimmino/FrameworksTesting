@@ -21,7 +21,7 @@ class AccountsApi {
       body: '{"email": "$email","password": "$password"}',
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       var responseBody = jsonDecode(response.body);
       jwt = responseBody['token'];
       userId = responseBody['user_id'];

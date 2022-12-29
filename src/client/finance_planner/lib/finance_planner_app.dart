@@ -11,6 +11,7 @@ class FinancePlannerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         title: 'Finance Planner',
         theme: ThemeData(
           primarySwatch: Colors.blue,
