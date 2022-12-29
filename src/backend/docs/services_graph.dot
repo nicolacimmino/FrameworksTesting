@@ -16,12 +16,11 @@ digraph architecture {
     service_registry[label="Service Registry"];
 
   subgraph edge_services {
-      api_gateway -> {
-        tokens
-        users
-        user_assets
-        service_registry
-      }
+      api_gateway -> tokens [label="POST\ntokens"]
+      api_gateway -> users [label="GET,POST,PATCH\nusers"]
+      api_gateway -> user_assets [label="GET,POST,DELETE\naccounts"]
+
+      api_gateway -> service_registry
   }
 
   subgraph public_services {
@@ -42,5 +41,10 @@ digraph architecture {
         config_server,
         service_registry
       }  [color="#03adfc"]
+  }
+
+  subgraph inter_service {
+    user_assets -> tokens [style=dashed, color=grey, label="validate token"]
+    users -> tokens [style=dashed, color=grey, label="validate token"]
   }
 }
