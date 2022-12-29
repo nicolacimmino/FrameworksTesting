@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class LoginWidget extends StatefulWidget {
   final Function(String userId) onUserChange;
+  final AccountsApi accountsApi;
 
-  const LoginWidget({super.key, required this.onUserChange});
+  const LoginWidget(
+      {super.key, required this.onUserChange, required this.accountsApi});
 
   @override
   State<LoginWidget> createState() => _LoginWidgetState();
@@ -20,9 +22,10 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   _login() async {
-    AccountsApi.logout();
+    widget.accountsApi.logout();
     await widget.onUserChange('');
-    await widget.onUserChange(await AccountsApi.login(userEmailController.text, userPasswordController.text));
+    await widget.onUserChange(await widget.accountsApi.login(
+        userEmailController.text, userPasswordController.text));
   }
 
   @override

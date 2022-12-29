@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 import 'account.dart';
 import 'accounts_api.dart';
+import 'login_widget.dart';
 
 class AccountsListWidget extends StatefulWidget {
-  final String userId;
+  //final String userId;
+  final AccountsApi accountsApi;
 
-  const AccountsListWidget({super.key, required this.userId});
+  const AccountsListWidget({super.key, required this.accountsApi});
 
   @override
   State<AccountsListWidget> createState() => _AccountsListWidgetState();
@@ -15,19 +17,28 @@ class AccountsListWidget extends StatefulWidget {
 
 class _AccountsListWidgetState extends State<AccountsListWidget> {
   late Future<List<Account>> futureAccounts;
+  String userId = '';
 
   @override
   void initState() {
     super.initState();
     print('accounts list widget init state');
     //if (widget.userId != '') {
-      futureAccounts = AccountsApi.fetchAccounts();
+      //futureAccounts = widget.accountsApi.fetchAccounts();
     //}
+  }
+
+  void _onUserChange(String newUserId){
+    setState(() {
+      futureAccounts = widget.accountsApi.fetchAccounts();
+      userId = newUserId;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.userId != '') {
+    print('accounts list widget build');
+    if (userId != '') {
       return FutureBuilder<List<Account>>(
           future: futureAccounts,
           builder: (context, snapshot) {
@@ -51,6 +62,7 @@ class _AccountsListWidgetState extends State<AccountsListWidget> {
           });
     }
 
-    return const Text('Login first.');
+    return LoginWidget(
+        onUserChange: _onUserChange, accountsApi: widget.accountsApi);
   }
 }

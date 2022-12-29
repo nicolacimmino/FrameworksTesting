@@ -6,15 +6,15 @@ import 'package:http/http.dart' as http;
 import 'account.dart';
 
 class AccountsApi {
-  static String jwt = '';
+  String jwt = '';
 
-  static String userId = '';
+  String userId = '';
 
-  static bool isUserAuthenticated() {
+  bool isUserAuthenticated() {
     return jwt != '' && userId !='';
   }
 
-  static Future<List<Account>> fetchAccounts() async {
+  Future<List<Account>> fetchAccounts() async {
     var response = await http.get(
       Uri.parse('http://localhost:8080/api/users/$userId/accounts'),
       headers: {
@@ -29,7 +29,7 @@ class AccountsApi {
     }
   }
 
-  static Future<Account> fetchAccount() async {
+  Future<Account> fetchAccount() async {
     var response = await http.get(
       Uri.parse(
           'http://localhost:8080/api/users/$userId/accounts/633b0585f20dd943edde4b30'),
@@ -45,12 +45,12 @@ class AccountsApi {
     }
   }
 
-  static void logout() {
+  void logout() {
     jwt = '';
     userId = '';
   }
 
-  static Future<String> login(String email, String password) async {
+  Future<String> login(String email, String password) async {
     var response = await http.post(
       Uri.parse('http://localhost:8081/api/tokens'),
       headers: {

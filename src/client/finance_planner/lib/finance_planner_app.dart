@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'accounts_list_widget.dart';
 
 class FinancePlannerApp extends StatelessWidget {
-  const FinancePlannerApp({super.key});
+  FinancePlannerApp({super.key});
+
+  final AccountsApi accountsApi = AccountsApi();
 
   // @override
   // State<FinancePlannerApp> createState() => _FinancePlannerAppState();
@@ -26,11 +28,11 @@ class FinancePlannerApp extends StatelessWidget {
           ),
           body: Center(
               child: Column(
-                children: [
-                  LoginWidget(onUserChange: _onUserChange),
-                  AccountsListWidget(userId: AccountsApi.userId),
-                ],
-              )),
+            children: [
+              AccountsListWidget(
+                  accountsApi: accountsApi),
+            ],
+          )),
         ));
   }
 }
