@@ -2,6 +2,8 @@ POC application to explore Spring Boot and Kotlin. The application implements au
 
 It's structured as a set of microservices and demonstrates a discovery service, API gateway, lightweight messaging between services (Rabbit MQ) and database persistance.
 
+As a spin-off of the main theme, I added a Flutter application to consume the API.
+
 # Backend
 
 The backend is built as a set of microservices in Spring Boot/Kotlin, with a MongoDB instance for persistence and a
