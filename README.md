@@ -1,3 +1,7 @@
+POC application to explore Spring Boot and Kotlin. The application implements authentication (outside the Spring Boot Authentication framework) and a simple CRUD HTTP API to manage user and user assets.
+
+It's structured as a set of microservices and demonstrates a discovery service, API gateway, lightweight messaging between services (Rabbit MQ).
+
 # Backend
 
 The backend is built as a set of microservices in Spring Boot/Kotlin, with a MongoDB instance for persistence and a
