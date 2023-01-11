@@ -2,7 +2,7 @@ POC application to explore Spring Boot and Kotlin. The application implements au
 
 It's structured as a set of microservices and demonstrates a discovery service, API gateway, lightweight messaging between services (Rabbit MQ) and database persistance.
 
-As a spin-off of the main theme, I added a Flutter application to consume the API.
+As a spin-off of the main theme, I added a Flutter application to consume the API, see [below](FinancePlanner#frontend).
 
 # Backend
 
