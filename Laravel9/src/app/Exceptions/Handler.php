@@ -48,10 +48,10 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->renderable(function (NotFoundHttpException $e, $request) {
+        $this->renderable(function (NotFoundHttpException $e) {
             return response()->json([
-                "error" => $e->getMessage(),
-                "error_code" => "NOT_FOUND"
+                "error" => "Resource not found.",
+                "error_code" => "NOT_FOUND",
             ])->setStatusCode(404);
         });
     }
