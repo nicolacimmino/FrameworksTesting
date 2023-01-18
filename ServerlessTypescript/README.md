@@ -1,3 +1,3 @@
 # Serverless Typescript
 
-Serverless with Typescript POC app consuming the expenses API. Heavily WIP.
+Serverless with Typescript POC app implementing the expenses API. Heavily WIP.
