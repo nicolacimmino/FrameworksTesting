@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 
 class CreateTokenController extends Controller
 {
     public function __invoke(Request $request)
     {
         if (!Auth::attempt($request->only(['email', 'password']))) {
-            return response("invalid credentials", 401);
+            throw new UnauthorizedException();
         }
 
         $user = User::where('email', $request['email'])->first();
