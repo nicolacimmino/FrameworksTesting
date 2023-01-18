@@ -1,0 +1,50 @@
+service: pse
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  stage: ${env:DEPLOY_STAGE}
+  memorySize: 128
+  timeout: 60
+  environment:
+    STAGE: ${env:DEPLOY_STAGE}
+  role: ${self:custom.stageSpecificRoles.${opt:stage, self:provider.stage}}
+
+functions:
+  catchall:
+    handler: src/handler.catchAll
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+  getExpense:
+    handler: src/handler.getExpense
+    events:
+      - http:
+          path: api/expenses/{expense_id}/
+          method: get
+          integration: lambda-proxy
+          cors: true
+
+plugins:
+  - serverless-plugin-scripts
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-aws-alias
+
+custom:
+  dynamodb:
+    stages:
+      - ${self:provider.stage}
+    start:
+      dbPath: /tmp/
+      migrate: true
+  envPath:
+    local: .env-local
+  stageSpecificRoles:
+    local: arn:aws:iam::123:role/LambdaRoleLocal
+
+resources:
+  Resources: ${file(serverless-${opt:stage, self:provider.stage}-resources.yml)}
+

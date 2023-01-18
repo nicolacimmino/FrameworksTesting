@@ -1,0 +1,26 @@
+stageSecureStoreTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ${env:DEPLOY_STAGE}-expenses
+    AttributeDefinitions:
+      - AttributeName: expenseId
+        AttributeType: N
+    KeySchema:
+      - AttributeName: expenseId
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+stageAtomicCountersTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ${env:DEPLOY_STAGE}-atomic_counters
+    AttributeDefinitions:
+      - AttributeName: counterName
+        AttributeType: S
+    KeySchema:
+      - AttributeName: counterName
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1

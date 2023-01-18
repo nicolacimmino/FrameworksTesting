@@ -1,0 +1,23 @@
+service: expenses
+frameworkVersion: '2 || 3'
+
+custom:
+  serverless-offline:
+    httpPort: 4101
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+provider:
+  name: aws
+  region: eu-central-1
+  runtime: nodejs12.x
+  lambdaHashingVersion: '20201221'
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: '*'
+
