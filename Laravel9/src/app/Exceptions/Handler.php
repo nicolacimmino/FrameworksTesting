@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -50,9 +52,25 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (NotFoundHttpException $e) {
             return response()->json([
-                "error" => "Resource not found.",
+                "error" => $e->getMessage(),
                 "error_code" => "NOT_FOUND",
             ])->setStatusCode(404);
         });
+
+        $this->renderable(function (BadRequestHttpException $e) {
+            return response()->json([
+                "error" => $e->getMessage(),
+                "error_code" => "BAD_REQUEST",
+            ])->setStatusCode(400);
+        });
+
+        $this->renderable(function (ValidationException $e) {
+            return response()->json([
+                "error" => $e->getMessage(),
+                "error_code" => "BAD_REQUEST",
+            ])->setStatusCode(400);
+        });
+
     }
+
 }
