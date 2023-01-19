@@ -1,0 +1,14 @@
+{
+  "name": "apidocs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "redoc-cli build apidocs.yaml --options.theme.colors.primary.main=green"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "redoc-cli": "^0.13.20"
+  }
+}

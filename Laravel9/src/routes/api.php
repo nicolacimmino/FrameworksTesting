@@ -22,7 +22,7 @@ Route::middleware(['throttle:api_anon'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/users/{user_id}', GetUserController::class)->middleware("auth:sanctum");
+    Route::get('/users/{user}', GetUserController::class)->middleware("auth:sanctum");
 });
 
 
