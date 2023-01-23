@@ -1,4 +1,4 @@
-# Finance Planner
+# Frameworks Testing
 
 POC application to explore various frameworks: Spring Boot/Kotlin, Laravel 9, Flutter. I'm implementing the same API/the same clients in various frameworks to learn and to fight the forgetting curve.
 
